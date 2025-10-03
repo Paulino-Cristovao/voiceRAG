@@ -2,8 +2,8 @@
 """Ingest PDFs and create FAISS index"""
 
 import os
-import json
 import pickle
+
 import numpy as np
 import fitz  # PyMuPDF
 import tiktoken
@@ -31,12 +31,12 @@ print(f"  - Chunk Size: {CHUNK_SIZE} tokens")
 print(f"  - Chunk Overlap: {CHUNK_OVERLAP} tokens")
 print(f"  - API Key: {api_key[:8]}...{api_key[-4:]}\n")
 
-def count_tokens(text):
+def count_tokens(text: str) -> int:
     """Count tokens in text"""
     enc = tiktoken.get_encoding("cl100k_base")
     return len(enc.encode(text))
 
-def extract_text_from_pdf(pdf_path):
+def extract_text_from_pdf(pdf_path: str) -> str:
     """Extract text from PDF"""
     doc = fitz.open(pdf_path)
     text = ""
@@ -45,7 +45,7 @@ def extract_text_from_pdf(pdf_path):
     doc.close()
     return text
 
-def chunk_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
+def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP):
     """Split text into chunks with overlap"""
     enc = tiktoken.get_encoding("cl100k_base")
     tokens = enc.encode(text)
@@ -55,13 +55,13 @@ def chunk_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
     while start < len(tokens):
         end = start + chunk_size
         chunk_tokens = tokens[start:end]
-        chunk_text = enc.decode(chunk_tokens)
-        chunks.append(chunk_text)
+        decoded_chunk = enc.decode(chunk_tokens)
+        chunks.append(decoded_chunk)
         start += chunk_size - overlap
 
     return chunks
 
-def get_embeddings(texts):
+def get_embeddings(texts: list) -> list:
     """Get embeddings from OpenAI"""
     response = client.embeddings.create(
         model=EMBEDDING_MODEL,
@@ -69,7 +69,7 @@ def get_embeddings(texts):
     )
     return [item.embedding for item in response.data]
 
-def build_index(pdf_dir="pdfs", output_dir="data"):
+def build_index(pdf_dir: str = "pdfs", output_dir: str = "data") -> None:
     """Build FAISS index from PDFs and text files"""
 
     print("📄 Extracting text from documents...")

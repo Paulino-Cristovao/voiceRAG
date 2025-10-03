@@ -12,22 +12,23 @@ import os
 import io
 import base64
 import tempfile
+import pickle
+import hashlib
+from functools import lru_cache
+from typing import List, Dict, Tuple, Optional, Union
+
 import numpy as np
 import faiss
-import pickle
 from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from openai import OpenAI
-from typing import List, Dict
-import hashlib
-from functools import lru_cache
 
 # LangChain imports
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.schema import HumanMessage, AIMessage
+from langchain.schema import HumanMessage, AIMessage, BaseMessage
 
 load_dotenv()
 
@@ -35,12 +36,15 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Configuration
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+if not OPENAI_API_KEY:
+    raise ValueError("OPENAI_API_KEY environment variable is required")
+
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-large")
 CHAT_MODEL = os.getenv("CHAT_MODEL", "gpt-4o-mini")
-TOP_K = int(os.getenv("TOP_K", 5))
+TOP_K = int(os.getenv("TOP_K", "5"))
 
-print(f"📋 Configuration:")
+print("📋 Configuration:")
 print(f"  - Embedding Model: {EMBEDDING_MODEL}")
 print(f"  - Chat Model: {CHAT_MODEL}")
 print(f"  - Top K Results: {TOP_K}")
@@ -76,10 +80,10 @@ class LangChainVoiceRAG:
             openai_api_key=OPENAI_API_KEY
         )
 
-        print(f"✅ LangChain RAG initialized:")
+        print("✅ LangChain RAG initialized:")
         print(f"  - FAISS index: {self.index.ntotal} vectors")
         print(f"  - Metadata: {len(self.metadata)} chunks")
-        print(f"  - Knowledge base ready")
+        print("  - Knowledge base ready")
 
     def detect_language(self, text: str) -> str:
         """Detect if query is in English or Portuguese"""
@@ -126,7 +130,7 @@ class LangChainVoiceRAG:
         self.response_cache[cache_key] = results
         return results
 
-    def check_profanity(self, text: str):
+    def check_profanity(self, text: str) -> Tuple[bool, Optional[str]]:
         """Check for profanity"""
         profanity_words = [
             "fuck", "shit", "damn", "bitch", "ass", "hell", "bastard",
@@ -140,8 +144,7 @@ class LangChainVoiceRAG:
                 lang = self.detect_language(text)
                 if lang == 'en':
                     return True, "I'm sorry, I cannot respond to questions with inappropriate language. Please rephrase your question respectfully."
-                else:
-                    return True, "Desculpe, não posso responder a perguntas com linguagem inapropriada. Por favor, reformule sua pergunta de forma respeitosa."
+                return True, "Desculpe, não posso responder a perguntas com linguagem inapropriada. Por favor, reformule sua pergunta de forma respeitosa."
 
         return False, None
 
@@ -152,11 +155,11 @@ class LangChainVoiceRAG:
 
         telecom_keywords = {
             # Portuguese
-            'fatura', 'pagar', 'pagamento', 'plano', 'internet', 'dados', 'saldo',
+            'fatura', 'pagar', 'pagamento', 'plano', 'dados', 'saldo',
             'apn', '5g', '4g', 'sim', 'chip', 'serviço', 'chamadas', 'minutos',
             'cobertura', 'rede', 'sinal', 'roaming', 'recarga', 'configuração',
             'telefone', 'celular', 'móvel', 'número', 'linha', 'conta', 'suporte',
-            'modem', 'router', 'wifi', 'banda', 'velocidade', 'contacto', 'email',
+            'modem', 'router', 'wifi', 'banda', 'velocidade', 'contacto',
             'escritório', 'app', 'aplicativo', 'mpesa', 'emola', 'banco', 'apoio',
             'recomenda', 'estudante', 'universitário', 'jovem', 'família', 'empresarial',
             # English
@@ -246,7 +249,7 @@ IMPORTANTE:
         ])
 
         # Convert conversation history to LangChain format
-        history_messages = []
+        history_messages: List[BaseMessage] = []
         for msg in conversation_history[-10:]:  # Last 10 messages for context
             if msg["role"] == "user":
                 history_messages.append(HumanMessage(content=msg["content"]))
@@ -307,7 +310,9 @@ IMPORTANTE:
         full_response = ""
         for chunk in response_stream:
             if hasattr(chunk, 'content'):
-                full_response += chunk.content
+                content = chunk.content
+                if isinstance(content, str):
+                    full_response += content
 
         print(f"✅ Response: {full_response[:100]}...")
         return full_response
@@ -350,16 +355,19 @@ rag_service = LangChainVoiceRAG()
 
 @app.get("/")
 async def read_root():
+    """Serve main application page"""
     return FileResponse("static/index.html")
 
 
 @app.get("/diagnostic")
 async def diagnostic():
+    """Serve diagnostic page for browser/microphone testing"""
     return FileResponse("static/diagnostic.html")
 
 
 @app.get("/favicon.svg")
 async def favicon():
+    """Serve favicon"""
     return FileResponse("static/favicon.svg")
 
 
@@ -459,7 +467,7 @@ async def websocket_endpoint(websocket: WebSocket):
         try:
             if websocket.client_state.name == "CONNECTED":
                 await websocket.close()
-        except:
+        except Exception:
             pass
 
 
