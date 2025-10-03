@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico - Mozaitelecomunicação</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #667eea; }
+        .test {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ddd;
+        }
+        .test.success { border-left-color: #22c55e; }
+        .test.error { border-left-color: #ef4444; }
+        .test.warning { border-left-color: #f59e0b; }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status.ok { background: #dcfce7; color: #166534; }
+        .status.fail { background: #fee2e2; color: #991b1b; }
+        .status.warn { background: #fef3c7; color: #92400e; }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #5568d3; }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        .info { color: #64748b; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Diagnóstico do Sistema</h1>
+    <p class="info">Este teste verifica se seu navegador e sistema estão prontos para usar o assistente de voz.</p>
+
+    <div id="results"></div>
+
+    <button onclick="runTests()">▶️ Executar Testes</button>
+    <button onclick="testMicrophone()">🎤 Testar Microfone Agora</button>
+    <button onclick="location.href='/'">🏠 Voltar ao Assistente</button>
+
+    <script>
+        const results = document.getElementById('results');
+
+        function addTest(name, status, message, details = '') {
+            const statusClass = status === 'ok' ? 'success' : status === 'fail' ? 'error' : 'warning';
+            const statusLabel = status === 'ok' ? 'OK' : status === 'fail' ? 'FALHOU' : 'AVISO';
+            const statusColor = status === 'ok' ? 'ok' : status === 'fail' ? 'fail' : 'warn';
+
+            const div = document.createElement('div');
+            div.className = `test ${statusClass}`;
+            div.innerHTML = `
+                <strong>${name}</strong>
+                <span class="status ${statusColor}">${statusLabel}</span>
+                <div style="margin-top: 8px">${message}</div>
+                ${details ? `<pre style="margin-top: 10px">${details}</pre>` : ''}
+            `;
+            results.appendChild(div);
+        }
+
+        async function runTests() {
+            results.innerHTML = '<h2>Executando testes...</h2>';
+
+            // Test 1: Browser Info
+            const browser = navigator.userAgent;
+            addTest(
+                '1. Informações do Navegador',
+                'ok',
+                'Navegador detectado',
+                browser
+            );
+
+            // Test 2: getUserMedia API
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                addTest(
+                    '2. API getUserMedia',
+                    'ok',
+                    'API de captura de áudio está disponível'
+                );
+            } else {
+                addTest(
+                    '2. API getUserMedia',
+                    'fail',
+                    'API não disponível. Atualize seu navegador.',
+                    'Navegadores suportados:\n• Chrome 60+\n• Firefox 55+\n• Safari 14+\n• Edge 79+'
+                );
+            }
+
+            // Test 3: HTTPS/Localhost
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+            const isSecure = protocol === 'https:' || hostname === 'localhost' || hostname === '127.0.0.1';
+
+            if (isSecure) {
+                addTest(
+                    '3. Conexão Segura',
+                    'ok',
+                    `Conexão via ${protocol} em ${hostname}`
+                );
+            } else {
+                addTest(
+                    '3. Conexão Segura',
+                    'fail',
+                    'Microfone requer HTTPS ou localhost',
+                    `Acesse via:\n• http://localhost:8000\n• https://seu-dominio.com\n\nAtual: ${protocol}//${hostname}`
+                );
+            }
+
+            // Test 4: MediaRecorder
+            if (window.MediaRecorder) {
+                addTest(
+                    '4. MediaRecorder API',
+                    'ok',
+                    'API de gravação disponível'
+                );
+            } else {
+                addTest(
+                    '4. MediaRecorder API',
+                    'fail',
+                    'MediaRecorder não disponível'
+                );
+            }
+
+            // Test 5: WebSocket
+            if (window.WebSocket) {
+                addTest(
+                    '5. WebSocket',
+                    'ok',
+                    'WebSocket disponível para comunicação em tempo real'
+                );
+            } else {
+                addTest(
+                    '5. WebSocket',
+                    'fail',
+                    'WebSocket não disponível'
+                );
+            }
+
+            // Test 6: Audio Playback
+            const audio = new Audio();
+            if (audio.canPlayType('audio/mpeg')) {
+                addTest(
+                    '6. Reprodução de Áudio',
+                    'ok',
+                    'Navegador pode reproduzir áudio MP3'
+                );
+            } else {
+                addTest(
+                    '6. Reprodução de Áudio',
+                    'warn',
+                    'Formato MP3 pode não ser suportado'
+                );
+            }
+
+            // Test 7: Permissions
+            if (navigator.permissions && navigator.permissions.query) {
+                try {
+                    const result = await navigator.permissions.query({ name: 'microphone' });
+                    const state = result.state;
+
+                    if (state === 'granted') {
+                        addTest(
+                            '7. Permissão de Microfone',
+                            'ok',
+                            'Permissão concedida ✅'
+                        );
+                    } else if (state === 'prompt') {
+                        addTest(
+                            '7. Permissão de Microfone',
+                            'warn',
+                            'Permissão será solicitada ao usar',
+                            'Clique em "Permitir" quando o navegador pedir'
+                        );
+                    } else {
+                        addTest(
+                            '7. Permissão de Microfone',
+                            'fail',
+                            'Permissão negada ❌',
+                            'Como permitir:\n• Chrome: Clique no 🔒 → Microfone → Permitir\n• Safari: Preferências → Sites → Microfone → Permitir\n• Firefox: Clique no 🔒 → Permissões → Permitir'
+                        );
+                    }
+                } catch (e) {
+                    addTest(
+                        '7. Permissão de Microfone',
+                        'warn',
+                        'Não foi possível verificar permissões',
+                        'Será solicitado ao usar o microfone'
+                    );
+                }
+            } else {
+                addTest(
+                    '7. Permissão de Microfone',
+                    'warn',
+                    'API de permissões não disponível',
+                    'Normal em alguns navegadores'
+                );
+            }
+
+            // Summary
+            const successCount = document.querySelectorAll('.test.success').length;
+            const errorCount = document.querySelectorAll('.test.error').length;
+            const warningCount = document.querySelectorAll('.test.warning').length;
+
+            const summary = document.createElement('div');
+            summary.style.marginTop = '20px';
+            summary.style.padding = '20px';
+            summary.style.background = errorCount > 0 ? '#fee2e2' : warningCount > 0 ? '#fef3c7' : '#dcfce7';
+            summary.style.borderRadius = '8px';
+            summary.innerHTML = `
+                <h3>📊 Resumo</h3>
+                <p>✅ Sucesso: ${successCount} | ⚠️ Avisos: ${warningCount} | ❌ Erros: ${errorCount}</p>
+                ${errorCount === 0 && warningCount === 0 ?
+                    '<p><strong>✅ Tudo pronto! Seu sistema está configurado corretamente.</strong></p>' :
+                errorCount > 0 ?
+                    '<p><strong>❌ Há erros que precisam ser corrigidos antes de usar o sistema.</strong></p>' :
+                    '<p><strong>⚠️ Sistema funcional, mas com avisos. Pode usar normalmente.</strong></p>'
+                }
+            `;
+            results.appendChild(summary);
+        }
+
+        async function testMicrophone() {
+            try {
+                console.log('Solicitando acesso ao microfone...');
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                addTest(
+                    '🎤 Teste de Microfone',
+                    'ok',
+                    'Microfone acessado com sucesso! ✅',
+                    'Fale algo e as barras de volume devem se mover.\nSe não ouvir nada, verifique as configurações de som.'
+                );
+
+                // Show audio level
+                const audioContext = new AudioContext();
+                const analyser = audioContext.createAnalyser();
+                const microphone = audioContext.createMediaStreamSource(stream);
+                microphone.connect(analyser);
+
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                let maxVolume = 0;
+                const checkVolume = setInterval(() => {
+                    analyser.getByteFrequencyData(dataArray);
+                    const average = dataArray.reduce((a, b) => a + b) / bufferLength;
+                    maxVolume = Math.max(maxVolume, average);
+                    console.log('Nível de áudio:', Math.round(average));
+                }, 100);
+
+                // Stop after 5 seconds
+                setTimeout(() => {
+                    clearInterval(checkVolume);
+                    stream.getTracks().forEach(track => track.stop());
+                    audioContext.close();
+
+                    if (maxVolume > 10) {
+                        alert(`✅ Microfone funcionando!\nNível máximo detectado: ${Math.round(maxVolume)}`);
+                    } else {
+                        alert('⚠️ Microfone conectado, mas nenhum som detectado.\nVerifique se o microfone está ativo e fale mais alto.');
+                    }
+                }, 5000);
+
+                alert('🎤 Teste iniciado! Fale algo nos próximos 5 segundos...');
+
+            } catch (error) {
+                addTest(
+                    '🎤 Teste de Microfone',
+                    'fail',
+                    `Erro: ${error.name}`,
+                    `${error.message}\n\nSoluções:\n• Clique em "Permitir" quando o navegador pedir\n• Verifique se um microfone está conectado\n• Feche outros apps que usam o microfone`
+                );
+            }
+        }
+
+        // Run tests on load
+        window.addEventListener('load', runTests);
+    </script>
+</body>
+</html>

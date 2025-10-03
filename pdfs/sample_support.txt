@@ -1,0 +1,249 @@
+MOZAITELECOMUNICAÇÃO - GUIA DE APOIO AO CLIENTE
+Versão 2025 | Idioma: Português (Moçambique)
+
+====================================================================
+PÁGINA 1 - INTRODUÇÃO E VISÃO GERAL
+====================================================================
+
+Bem-vindo à Mozaitelecomunicação, o seu parceiro em comunicações móveis e digitais.
+Este Guia de Apoio ao Cliente foi criado para ajudá-lo(a) a compreender todos os serviços,
+planos, métodos de pagamento, canais de contacto e políticas operacionais da nossa empresa.
+
+A Mozaitelecomunicação oferece soluções de conectividade seguras, rápidas e fiáveis
+para clientes particulares, empresariais e familiares, garantindo cobertura nacional
+e suporte técnico permanente. A nossa missão é proporcionar uma experiência digital
+moderna, acessível e transparente, alinhada com as necessidades dos moçambicanos.
+
+Neste documento encontrará informações sobre:
+- Métodos de faturação e pagamento;
+- Planos móveis e pacotes de dados;
+- Apoio técnico e resolução de problemas;
+- Perguntas frequentes e procedimentos administrativos;
+- Termos e condições gerais de serviço;
+- Política de privacidade e segurança de dados;
+- Direitos e deveres do cliente.
+
+Recomendamos que guarde este guia ou o consulte online através do nosso site
+www.mozaitelecomunicacao.co.mz, para garantir que possui sempre a versão atualizada.
+
+====================================================================
+PÁGINA 2 - INFORMAÇÕES DE FATURAÇÃO
+====================================================================
+
+Como Pagar a Sua Fatura:
+1. **Online:** aceda a www.mozaitelecomunicacao.co.mz e inicie sessão na sua conta.
+2. **Aplicativo Móvel:** baixe a App Mozaitel (Android/iOS) e pague via M-Pesa, e-Mola ou cartão bancário.
+3. **Local Físico:** visite o nosso escritório principal (Av. Julius Nyerere, Maputo) ou parceiros autorizados.
+4. **Telefone USSD:** disque *123# e selecione "Pagamentos" → "Fatura" → "Confirmar".
+
+**Ciclo de Faturação:**
+- As faturas são emitidas no **dia 1** de cada mês;
+- O cliente dispõe de **15 dias úteis** para efetuar o pagamento;
+- Após esse período, incidem encargos por atraso.
+
+**Pagamento Automático:**
+O cliente pode ativar a funcionalidade "Débito Automático" na App Mozaitel,
+garantindo que o valor é debitado automaticamente da conta bancária selecionada.
+
+**Notificações:**
+Receberá lembretes via SMS e email sobre a emissão e vencimento da fatura.
+
+**Faturas Eletrónicas:**
+Todas as faturas são disponibilizadas em formato digital (PDF),
+acessíveis na área do cliente e enviadas por email cadastrado.
+
+====================================================================
+PÁGINA 3 - POLÍTICA DE ATRASOS E PENALIDADES
+====================================================================
+
+**Pagamento em Atraso:**
+- Após **15 dias**, aplica-se uma taxa de atraso de **50 MZN**;
+- Após **30 dias**, o serviço é **suspenso automaticamente**;
+- Após **60 dias**, a conta pode ser **encerrada por inatividade**.
+
+**Reativação do Serviço:**
+O cliente deve regularizar o pagamento e contactar o apoio para reativar a conta.
+A reativação ocorre no prazo máximo de 2 horas após confirmação do pagamento.
+
+**Disputas de Fatura:**
+Caso identifique valores incorretos, o cliente deve abrir um **pedido de revisão**
+através do email: faturacao@mozaitelecomunicacao.co.mz.
+Anexar cópia da fatura e descrição do erro.
+
+**Reembolsos:**
+- Só são aplicáveis em caso de cobrança indevida confirmada.
+- O prazo médio para processamento é de **7 dias úteis**.
+- Reembolsos são efetuados via M-Pesa ou crédito em conta.
+
+====================================================================
+PÁGINA 4 - PLANOS DE SERVIÇO E PACOTES
+====================================================================
+
+**Plano Premium 5G**
+- 50GB de dados 5G de alta velocidade;
+- Chamadas e SMS ilimitados para todas as redes nacionais;
+- Roaming internacional incluído (20 países);
+- Preço: 1.500 MZN/mês.
+
+**Plano Básico 4G**
+- 10GB de dados 4G;
+- 500 minutos de chamadas nacionais;
+- SMS ilimitados;
+- Preço: 500 MZN/mês.
+
+**Plano Familiar 5G**
+- 100GB de dados partilhados;
+- Até 4 linhas associadas;
+- Chamadas ilimitadas entre membros da família;
+- Preço: 2.500 MZN/mês.
+
+**Plano Empresarial PRO**
+- 200GB de dados;
+- 2.000 minutos para todas as redes;
+- Dashboard de gestão e relatórios;
+- Preço: 5.000 MZN/mês.
+
+**Adicionais:**
+- Pacotes extra de dados disponíveis (*125#);
+- Ative roaming, hotspots e partilha via App Mozaitel.
+
+====================================================================
+PÁGINA 5 - APOIO TÉCNICO E RESOLUÇÃO DE PROBLEMAS
+====================================================================
+
+**Sem Ligação à Internet**
+1. Reinicie o dispositivo.
+2. Verifique se os dados móveis estão ativos.
+3. Confirme as definições APN: `apn.mozaitel.mz`.
+4. Verifique se há saldo de dados ativo.
+5. Contacte o apoio se o problema persistir.
+
+**Cobertura de Rede**
+- Cobertura 5G: Maputo, Matola, Beira.
+- Cobertura 4G: nacional.
+- 3G disponível em áreas rurais.
+
+**Configuração Manual (Android):**
+Definições → Redes Móveis → APN → Novo:
+- Nome: Mozaitelecom
+- APN: apn.mozaitel.mz
+- MCC: 645 | MNC: 01
+
+**Problemas de SIM**
+- SIM perdido/roubado: Ligue 840-123-456
+- Substituição: 100 MZN
+- Entrega: 24h
+
+====================================================================
+PÁGINA 6 - SEGURANÇA E PRIVACIDADE
+====================================================================
+
+**Proteção de Dados:**
+A Mozaitelecomunicação cumpre a Lei de Proteção de Dados Pessoais (Lei n.º 3/2017),
+garantindo que as suas informações são utilizadas apenas para fins de prestação de serviço.
+
+**Segurança Digital:**
+- Nunca partilhe códigos de acesso, PIN ou OTP.
+- A empresa nunca solicita senhas por telefone ou SMS.
+- Utilize autenticação de dois fatores na App Mozaitel.
+
+**Fraudes e Phishing:**
+- Ignore mensagens suspeitas.
+- Reporte tentativas fraudulentas: segurança@mozaitelecomunicacao.co.mz
+
+**Confidencialidade:**
+Todos os funcionários seguem políticas internas de confidencialidade e ética.
+
+====================================================================
+PÁGINA 7 - ALTERAÇÕES DE CONTA E SERVIÇOS ADICIONAIS
+====================================================================
+
+**Atualização de Dados:**
+- Pode atualizar o seu endereço, NUIT, email ou contacto via App Mozaitel ou no balcão.
+
+**Alteração de Plano:**
+- A alteração entra em vigor no **próximo ciclo de faturação**.
+- Nenhum custo adicional é aplicado.
+
+**Serviços Adicionais:**
+- Hotspot móvel;
+- Bloqueio temporário;
+- Conta secundária familiar;
+- Alertas via SMS (saldo, uso, vencimento).
+
+**Cancelamento de Serviço:**
+- Solicite via email com 30 dias de antecedência;
+- Todos os saldos pendentes devem ser liquidados.
+
+====================================================================
+PÁGINA 8 - CANAIS DE CONTACTO
+====================================================================
+
+**Apoio Geral:**
+- Email: apoio@mozaitelecomunicacao.co.mz
+- Telefone: 840-123-456 (Seg-Sex 8h00-18h00)
+- Emergências: 843-999-999 (24/7)
+
+**Endereço:**
+Avenida Julius Nyerere, Nº 2500, Maputo, Moçambique
+
+**Redes Sociais:**
+- Facebook: /Mozaitelecom
+- Twitter/X: @Mozaitel
+- Instagram: @Mozaitelecomunicacao
+
+**Reclamações:**
+- Email: reclamacoes@mozaitelecomunicacao.co.mz
+- Tempo de resposta: até 5 dias úteis.
+
+====================================================================
+PÁGINA 9 - PERGUNTAS FREQUENTES (FAQ)
+====================================================================
+
+**Q:** Como posso mudar o meu plano?  
+**A:** Via App Mozaitel → "Gerir Conta" → "Alterar Plano".  
+
+**Q:** Posso obter reembolso?  
+**A:** Sim, em caso de falha de serviço >48h. Solicite por email.  
+
+**Q:** Como consultar saldo de dados?  
+**A:** *124# ou App Mozaitel.  
+
+**Q:** E se ultrapassar o limite?  
+**A:** Velocidade reduzida a 512kbps; compre pacotes adicionais via *125#.  
+
+**Q:** Posso transferir saldo?  
+**A:** Sim, via *126# → “Transferir Saldo”.  
+
+**Q:** Como ativo roaming?  
+**A:** Via App Mozaitel ou *127#.  
+
+**Q:** A app não abre. O que fazer?  
+**A:** Atualize na Play Store; se persistir, desinstale e reinstale.
+
+====================================================================
+PÁGINA 10 - TERMOS, DIREITOS E ENCERRAMENTO
+====================================================================
+
+**Direitos do Cliente:**
+- Acesso à informação clara e transparente;
+- Privacidade e proteção de dados;
+- Reclamação justa e resposta em tempo útil;
+- Portabilidade de número.
+
+**Deveres do Cliente:**
+- Manter dados atualizados;
+- Cumprir prazos de pagamento;
+- Respeitar termos contratuais.
+
+**Encerramento de Conta:**
+- Por pedido do cliente ou incumprimento contratual.
+- Todos os saldos devem ser liquidados antes da rescisão.
+
+**Apoio à Inclusão Digital:**
+A Mozaitelecomunicação apoia programas de literacia digital e tarifas sociais
+para estudantes e idosos, disponíveis mediante prova de elegibilidade.
+
+**Agradecimento:**
+Obrigado por escolher a Mozaitelecomunicação!
+Estamos ao seu lado, conectando Moçambique ao futuro.
