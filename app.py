@@ -40,13 +40,17 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 if not OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY environment variable is required")
 
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-large")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
 CHAT_MODEL = os.getenv("CHAT_MODEL", "gpt-4o-mini")
+TTS_MODEL = os.getenv("TTS_MODEL", "tts-1")
+TTS_VOICE = os.getenv("TTS_VOICE", "nova")
+TTS_SPEED = float(os.getenv("TTS_SPEED", "1.1"))
 TOP_K = int(os.getenv("TOP_K", "5"))
 
 print("📋 Configuration:")
 print(f"  - Embedding Model: {EMBEDDING_MODEL}")
 print(f"  - Chat Model: {CHAT_MODEL}")
+print(f"  - TTS: {TTS_MODEL} ({TTS_VOICE} @ {TTS_SPEED}x)")
 print(f"  - Top K Results: {TOP_K}")
 print(f"  - API Key: {OPENAI_API_KEY[:8]}...{OPENAI_API_KEY[-4:]}")
 
@@ -188,58 +192,58 @@ class LangChainVoiceRAG:
     def create_chain_with_memory(self, conversation_history: List[Dict], language: str = 'pt'):
         """Create LangChain chain with conversation memory and language support"""
 
-        # Bilingual system prompts
+        # Bilingual system prompts with natural fillers
         if language == 'en':
-            system_template = """You are a helpful customer service assistant for Mozaitelecomunicação, a telecommunications company in Mozambique.
+            system_template = """You are a friendly customer service assistant for Mozaitelecomunicação in Mozambique.
+
+SPEAK NATURALLY:
+- Use short sentences and natural confirmations: "Yes, of course", "I see", "Let me help you with that"
+- Be conversational, warm, and personable - like talking to a friend
+- Use polite fillers: "Sure", "Absolutely", "I understand"
+- Avoid robotic or overly formal language
+- Keep responses concise: 2-3 short sentences maximum
 
 AVAILABLE DOCUMENTATION:
 {context}
 
-IMPORTANT RULES:
-
-1. ANSWER ONLY with information EXPLICITLY in the DOCUMENTATION above
-2. If information is NOT in documentation, say:
-   "I'm sorry, I don't have that specific information. Please contact our support team at apoio@mozaitelecomunicacao.co.mz or visit our office at Av. Julius Nyerere, Nº 2500, Maputo."
-
+CRITICAL RULES:
+1. ONLY answer with information EXPLICITLY in the documentation above
+2. If information is missing, say: "I don't have that information right now. Please contact apoio@mozaitelecomunicacao.co.mz or visit Av. Julius Nyerere, Nº 2500, Maputo."
 3. NEVER invent information
-4. USE conversation history to understand context and references like "that", "this", "it"
-5. If question requires admin action (plan change, cancellation, complaint), redirect to apoio@mozaitelecomunicacao.co.mz
+4. USE conversation history to understand context ("that plan", "this option", etc.)
+5. For admin tasks (changes, complaints), redirect to apoio@mozaitelecomunicacao.co.mz
 
-6. Be friendly, helpful, and conversational (like talking to a friend)
-7. Use natural language - avoid being too formal or robotic
-8. Keep responses concise but complete (2-4 sentences)
-
-IMPORTANT:
-- If user asks "Which one do you recommend?" or "Do you have something specific?", USE HISTORY to understand context
-- Phrases like "that plan", "this option" refer to previous topic in history
-- For recommendations, suggest the most suitable plan based on available documentation
-- Be warm and personable in your responses"""
+EXAMPLES OF NATURAL RESPONSES:
+- "Yes, of course! The Premium 5G plan costs..."
+- "I see. Let me help you with that..."
+- "Sure! For students, I'd recommend..."
+"""
 
         else:  # Portuguese
-            system_template = """Você é um assistente prestativo de atendimento ao cliente da Mozaitelecomunicação, uma empresa de telecomunicações em Moçambique.
+            system_template = """Você é um agente amigável de apoio ao cliente da Mozaitelecomunicação em Moçambique.
+
+FALE NATURALMENTE:
+- Use frases curtas e confirmações naturais: "Sim, claro", "Percebo", "Deixe-me ajudá-lo com isso"
+- Seja conversacional, caloroso e pessoal - como falar com um amigo
+- Use expressões educadas: "Pois", "Com certeza", "Entendo"
+- Evite linguagem robótica ou muito formal
+- Mantenha respostas concisas: 2-3 frases curtas no máximo
 
 DOCUMENTAÇÃO DISPONÍVEL:
 {context}
 
-REGRAS IMPORTANTES:
-
-1. RESPONDA APENAS com informações EXPLICITAMENTE presentes na DOCUMENTAÇÃO acima
-2. Se a informação NÃO estiver na documentação, diga:
-   "Desculpe, não tenho essa informação específica. Por favor, contacte nossa equipa de apoio em apoio@mozaitelecomunicacao.co.mz ou visite nosso escritório na Av. Julius Nyerere, Nº 2500, Maputo."
-
+REGRAS CRÍTICAS:
+1. APENAS responda com informações EXPLICITAMENTE na documentação acima
+2. Se a informação não existe, diga: "Não tenho essa informação agora. Por favor, contacte apoio@mozaitelecomunicacao.co.mz ou visite Av. Julius Nyerere, Nº 2500, Maputo."
 3. NUNCA invente informações
-4. USE o histórico da conversa para entender contexto e referências como "esse", "qual", "aquilo"
-5. Se a pergunta requer ação administrativa (mudança, cancelamento, reclamação), redirecione para apoio@mozaitelecomunicacao.co.mz
+4. USE o histórico da conversa para entender contexto ("esse plano", "essa opção", etc.)
+5. Para tarefas administrativas (mudanças, reclamações), redirecione para apoio@mozaitelecomunicacao.co.mz
 
-6. Seja amigável, prestativo e conversacional (como falar com um amigo)
-7. Use linguagem natural - evite ser muito formal ou robótico
-8. Mantenha respostas concisas mas completas (2-4 frases)
-
-IMPORTANTE:
-- Se o usuário perguntar "E qual você recomenda?" ou "Tem algo específico?", use o HISTÓRICO para entender o contexto
-- Frases como "esse plano", "essa opção" referem-se ao tópico anterior no histórico
-- Para recomendações, sugira o plano mais adequado baseado na documentação disponível
-- Seja caloroso e pessoal nas suas respostas"""
+EXEMPLOS DE RESPOSTAS NATURAIS:
+- "Sim, claro! O plano Premium 5G custa..."
+- "Percebo. Deixe-me ajudá-lo com isso..."
+- "Pois! Para estudantes, recomendo..."
+"""
 
         # Create prompt template
         prompt = ChatPromptTemplate.from_messages([
@@ -269,6 +273,31 @@ IMPORTANTE:
 
         return chain
 
+    def summarize_context(self, context_chunks: List[Dict], language: str = 'pt') -> str:
+        """Summarize and merge context if too large"""
+        context_parts = []
+        for i, chunk in enumerate(context_chunks, 1):
+            context_parts.append(f"[Doc {i}]\n{chunk['text']}")
+
+        full_context = "\n\n".join(context_parts)
+
+        # If context is too large (>3000 chars), summarize
+        if len(full_context) > 3000:
+            prompt = "Summarize and merge these docs concisely, keeping all key facts:" if language == 'en' else "Resume e combine estes documentos de forma concisa, mantendo todos os factos-chave:"
+
+            summary_response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": full_context}
+                ],
+                temperature=0.1,
+                max_tokens=800
+            )
+            return summary_response.choices[0].message.content
+
+        return full_context
+
     def generate_response(self, query: str, context_chunks: List[Dict],
                          conversation_history: List[Dict]) -> str:
         """Generate response with caching and bilingual support"""
@@ -284,12 +313,8 @@ IMPORTANTE:
         # Check relevance
         is_relevant = self.check_relevance(query, context_chunks)
 
-        # Build context with FULL text
-        context_parts = []
-        for i, chunk in enumerate(context_chunks, 1):
-            context_parts.append(f"[Document {i}]\n{chunk['text']}")
-
-        context = "\n\n".join(context_parts)
+        # Build context (with summarization if needed)
+        context = self.summarize_context(context_chunks, language)
 
         # Log
         print(f"\n🔍 Query: {query}")
@@ -333,17 +358,17 @@ IMPORTANTE:
         finally:
             os.unlink(tmp_path)
 
-    def text_to_speech(self, text: str):
-        """Convert text to speech"""
+    def text_to_speech(self, text: str) -> bytes:
+        """Convert text to speech with streaming"""
         response = client.audio.speech.create(
-            model="tts-1",
-            voice="nova",
+            model=TTS_MODEL,
+            voice=TTS_VOICE,
             input=text,
-            speed=1.1  # Slightly faster for more natural feel
+            speed=TTS_SPEED
         )
 
         audio_data = io.BytesIO()
-        for chunk in response.iter_bytes():
+        for chunk in response.iter_bytes(chunk_size=4096):
             audio_data.write(chunk)
 
         return audio_data.getvalue()

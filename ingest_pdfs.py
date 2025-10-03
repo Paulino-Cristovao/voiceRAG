@@ -23,7 +23,7 @@ client = OpenAI(api_key=api_key)
 # Configuration - Match app.py settings
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "400"))  # tokens
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "50"))
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-large")  # Upgraded to large
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")  # Faster, smaller
 
 print(f"📋 Ingestion Configuration:")
 print(f"  - Embedding Model: {EMBEDDING_MODEL}")
