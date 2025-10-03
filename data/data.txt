@@ -1,0 +1,348 @@
+MOZAITELECOMUNICAÇÃO – GUIA DE APOIO AO CLIENTE (Versão 2025)
+
+Idioma: Português (Moçambique)
+
+PÁGINA 1 – INTRODUÇÃO E VISÃO GERAL
+
+Bem-vindo(a) à Mozaitelecomunicação, o seu parceiro em comunicações móveis e digitais.
+Este guia foi criado para ajudá-lo(a) a compreender todos os serviços, planos, métodos de pagamento, canais de contacto e políticas da empresa.
+A nossa missão é garantir conectividade fiável, acessível e inclusiva para todos os moçambicanos.
+Neste guia: faturação, planos, apoio técnico, segurança, direitos e deveres do cliente.
+
+PÁGINA 2 – MISSÃO, VALORES E COMPROMISSOS
+
+Missão: Conectar Moçambique ao futuro digital.
+Visão: Ser líder em inovação, qualidade de rede e atendimento ao cliente.
+Valores: Transparência | Inovação | Inclusão | Sustentabilidade.
+Compromissos:
+
+Atendimento ético e acessível.
+
+Soluções adequadas a cada perfil (residencial, empresarial, familiar).
+
+Proteção de dados e respeito pela privacidade.
+
+Cenário: Cliente com deficiência auditiva solicita suporte via chat ao vivo; agente ativa canal de texto em tempo real.
+
+PÁGINA 3 – INFORMAÇÕES DE FATURAÇÃO E MÉTODOS DE PAGAMENTO
+
+Online: www.mozaitelecomunicacao.co.mz
+ → Área do Cliente.
+
+App Mozaitel: Pague via M-Pesa, e-Mola ou cartão.
+
+USSD: *123# → Pagamentos → Fatura.
+
+Balcões: Escritórios e agentes autorizados.
+Ciclo: Emissão no dia 1, vencimento ao dia 15.
+Opção de débito automático disponível.
+Notificações enviadas por SMS/e-mail (emissão, lembrete, vencimento).
+
+PÁGINA 4 – CICLO DE FATURAÇÃO E NOTIFICAÇÕES
+
+Dia 1: Geração da fatura.
+
+Dia 5: Envio de lembrete.
+
+Dia 10: Alerta de vencimento.
+
+Dia 15: Vencimento.
+
+Dia 16–30: Multa 50 MZN.
+
+Dia 30: Suspensão.
+
+Dia 60: Encerramento.
+
+Cenário: Cliente recebe lembrete por SMS e efetua pagamento imediato via App; sistema envia confirmação automática.
+
+PÁGINA 5 – POLÍTICA DE ATRASOS, DISPUTAS E REEMBOLSOS
+
+Atrasos: Multa 50 MZN após 15 dias.
+Suspensão: 30 dias; Encerramento: 60 dias.
+Reativação: Até 2 h após pagamento.
+Disputas: Envie e-mail faturacao@… com nº de conta e descrição.
+Prazo resposta: 3 dias úteis.
+Reembolsos: Apenas cobranças indevidas confirmadas (7 dias úteis).
+
+Cenário: Cobrança de roaming incorreta → crédito automático de 70 %.
+
+PÁGINA 6 – PLANOS MÓVEIS E ADICIONAIS
+
+Premium 5G – 50 GB, chamadas/SMS ilimitados, roaming (20 países) – 1 500 MZN.
+Básico 4G – 10 GB, 500 min, SMS ilimitados – 500 MZN.
+Familiar 5G – 100 GB partilhados (4 linhas) – 2 500 MZN.
+Add-ons: Social, Noite, Streaming HD (*125#).
+PUJ: Após esgotar, velocidade 512 kbps.
+
+PÁGINA 7 – PLANOS EMPRESARIAIS E IoT
+
+Empresarial PRO – 200 GB, 2 000 min, dashboard, IP fixo – 5 000 MZN.
+IoT Starter – 1 GB/SIM – 50 MZN; gestão central via portal.
+SLA 99,5 %; gestor dedicado; APIs para integração ERP.
+Cenário: Empresa ativa 100 SIMs IoT para sensores agrícolas; AI sugere plano agregado.
+
+PÁGINA 8 – POLÍTICA DE USO JUSTO E ADD-ONS
+
+Limite definido por plano; após consumo, redução de velocidade.
+Notificação 80 % / 100 %.
+Add-ons disponíveis via App e *125#.
+Cenário: Utilizador streaming ativa add-on “Noite Ilimitada” das 22h–6h.
+
+PÁGINA 9 – APOIO TÉCNICO: INTERNET, APN, COBERTURA
+
+Sem ligação:
+1 Reinicie, 2 Verifique dados móveis, 3 APN apn.mozaitel.mz, 4 Saldo.
+Cobertura: 5G (Maputo, Matola, Beira); 4G (nacional); 3G (rural).
+Cenário: Cliente sem sinal 5G → sistema orienta troca para 4G.
+
+PÁGINA 10 – PROBLEMAS COM CARTÃO SIM E eSIM
+
+Perda/Roubo: 840-123-456 → bloqueio imediato.
+Substituição: 100 MZN / 24 h.
+eSIM: QR code na App ou balcão; compatível c/ modelos suportados.
+Cenário: Turista compra eSIM 15 dias; recebe SMS de boas-vindas e saldo.
+
+PÁGINA 11 – SEGURANÇA DIGITAL E PROTEÇÃO DE DADOS
+
+Conformidade Lei 3/2017.
+Uso exclusivo para prestação de serviço.
+2FA obrigatório.
+Campanhas “Proteja o Seu PIN”.
+
+PÁGINA 12 – PREVENÇÃO DE FRAUDES E CIBERSEGURANÇA
+
+Fraudes comuns: SIM swap, phishing, links falsos.
+Verificação biométrica no balcão.
+Reporte: seguranca@mozaitelecomunicacao.co.mz
+
+Cenário: SMS falso detectado → alerta coletivo enviado.
+
+PÁGINA 13 – ALTERAÇÕES DE CONTA E PORTABILIDADE
+
+Atualize dados via App.
+Mudança de plano → próximo ciclo.
+Port-in gratuito (24–48 h).
+Cancelamento: aviso 30 dias.
+
+PÁGINA 14 – CANAIS DE CONTACTO E SLA
+
+Email apoio@…, Tel 840-123-456 (8–18h), Emergências 843-999-999.
+SLA: 1ª resposta < 30 s; resolução padrão 48 h.
+Escalação L1 → L2 → L3.
+
+PÁGINA 15 – FAQ E TUTORIAIS
+
+Saldo *124#, Add-ons *125#, Roaming *127#, Transferência *126#.
+Vídeos tutoriais na App.
+
+PÁGINA 16 – CENÁRIOS DE ATENDIMENTO (VOZ E CHAT)
+
+Cliente: “Sem internet!”
+IA: “Deseja seguir passo a passo ou falar com técnico?”
+Interrupção suportada; IA muda contexto consoante pedido.
+
+PÁGINA 17 – INCLUSÃO DIGITAL E CLIENTES VULNERÁVEIS
+
+Tarifas sociais p/ estudantes & idosos.
+Linha prioritária 848.
+Tradução texto-voz para deficientes auditivos.
+
+PÁGINA 18 – EDUCAÇÃO DIGITAL E LITERACIA
+
+Workshops em escolas; guias Hotspot/App/Segurança.
+Programa “Mulheres Digitais”.
+
+PÁGINA 19 – CAMPANHAS E PROMOÇÕES
+
+Semana Digital (2x dados); Plano Jovem (50 % off); Roaming África (30 % off).
+Reembolsos automáticos se ativação incorreta.
+
+PÁGINA 20 – TERMOS, DIREITOS E ENCERRAMENTO
+
+Direitos: informação clara, privacidade, portabilidade.
+Deveres: pagar em dia, manter dados.
+Encerramento: por pedido ou incumprimento.
+Agradecimento: Obrigado por escolher a Mozaitelecomunicação!
+
+
+MOZAITELECOMUNICAÇÃO – CUSTOMER SUPPORT GUIDE (Version 2025)
+
+Language: English (Mozambique)
+
+PAGE 1 – INTRODUCTION AND OVERVIEW
+
+Welcome to Mozaitelecomunicação, your trusted partner in mobile and digital communications.
+This guide was created to help you understand our services, plans, payment methods, contact channels, and operational policies.
+Our mission is to ensure reliable, affordable, and inclusive connectivity for all Mozambicans.
+In this guide: billing, plans, technical support, data security, customer rights and responsibilities.
+
+PAGE 2 – MISSION, VALUES, AND CUSTOMER COMMITMENTS
+
+Mission: Connect Mozambique to the digital future.
+Vision: Lead in innovation, network quality, and customer care.
+Values: Transparency | Innovation | Inclusion | Sustainability.
+Commitments:
+
+Ethical and accessible service.
+
+Tailored solutions for residential, business, and family users.
+
+Data protection and privacy compliance.
+
+Scenario: A hearing-impaired customer requests chat support; agent activates real-time text channel.
+
+PAGE 3 – BILLING INFORMATION AND PAYMENT METHODS
+
+Online: Visit www.mozaitelecomunicacao.co.mz
+ → Customer Area.
+
+Mozaitel App: Pay via M-Pesa, e-Mola, or bank card.
+
+USSD: *123# → Payments → Bill.
+
+In Person: Main office or authorized agents.
+Billing cycle: Issued on day 1, due by day 15.
+Auto-debit option: Enable in the App; cancel anytime before debit date.
+Notifications are sent by SMS/email (issue, reminder, due).
+
+PAGE 4 – BILLING CYCLE AND NOTIFICATIONS
+
+Day 1: Invoice generated.
+
+Day 5: Reminder sent.
+
+Day 10: Due date alert.
+
+Day 15: Payment deadline.
+
+Day 16–30: Late fee 50 MZN.
+
+Day 30: Suspension.
+
+Day 60: Account closure.
+
+Scenario: Customer receives SMS reminder, pays via App, and gets instant confirmation.
+
+PAGE 5 – LATE PAYMENT, DISPUTES, AND REFUNDS
+
+Late Fee: 50 MZN after 15 days.
+Suspension: After 30 days; Closure: After 60 days.
+Reactivation: Within 2 hours after payment confirmation.
+Disputes: Email faturacao@... with account number and description.
+Response time: 3 business days.
+Refunds: Only for confirmed incorrect charges (processed within 7 business days).
+
+Scenario: Incorrect roaming charge → 70% automatic credit after investigation.
+
+PAGE 6 – MOBILE PLANS AND ADD-ONS
+
+Premium 5G – 50 GB, unlimited calls/SMS, roaming (20 countries) – 1,500 MZN.
+Basic 4G – 10 GB, 500 mins, unlimited SMS – 500 MZN.
+Family 5G – 100 GB shared (4 lines) – 2,500 MZN.
+Add-ons: Social, Night, HD Streaming (*125#).
+Fair Usage Policy: After data cap, speed drops to 512 kbps.
+
+PAGE 7 – BUSINESS AND IoT PLANS
+
+Business PRO – 200 GB, 2,000 mins, dashboard, fixed IP – 5,000 MZN.
+IoT Starter – 1 GB/SIM – 50 MZN; central portal for management.
+SLA 99.5%; dedicated account manager; ERP API integration.
+Scenario: Enterprise deploys 100 IoT SIMs for agriculture sensors; AI recommends aggregated plan.
+
+PAGE 8 – FAIR USAGE POLICY AND ADD-ONS
+
+Defined per plan; once reached, speed is reduced.
+Notifications at 80% and 100% usage.
+Add-ons purchasable via App or *125#.
+Scenario: Streamer activates “Night Unlimited” add-on (10 PM–6 AM).
+
+PAGE 9 – TECHNICAL SUPPORT: INTERNET, APN, COVERAGE
+
+If no connection:
+
+Restart device.
+
+Check mobile data.
+
+APN: apn.mozaitel.mz.
+
+Verify balance.
+Coverage: 5G (Maputo, Matola, Beira); 4G (nationwide); 3G (rural).
+Scenario: Customer with weak 5G signal guided to switch to 4G network.
+
+PAGE 10 – SIM CARD AND eSIM ISSUES
+
+Lost/Stolen: Call 840-123-456 for immediate block.
+Replacement: 100 MZN / 24h delivery.
+eSIM: QR code via App or branch; compatible devices only.
+Scenario: Tourist buys 15-day eSIM; receives welcome SMS and balance info.
+
+PAGE 11 – DIGITAL SECURITY AND DATA PROTECTION
+
+Compliant with Law No. 3/2017 (Personal Data Protection).
+Data used only for service provision.
+Two-Factor Authentication required.
+Campaigns: “Protect Your PIN.”
+
+PAGE 12 – FRAUD PREVENTION AND CYBERSECURITY
+
+Common frauds: SIM swap, phishing, fake payment links.
+Biometric verification required in-branch.
+Report: seguranca@mozaitelecomunicacao.co.mz
+
+Scenario: Detected phishing SMS → alert broadcast to affected users.
+
+PAGE 13 – ACCOUNT CHANGES, PORTABILITY, AND CANCELLATION
+
+Update info via App.
+Plan changes → next billing cycle.
+Port-in free (24–48h).
+Cancellation: 30-day notice.
+Outstanding balances must be cleared before closure.
+
+PAGE 14 – CONTACT CHANNELS AND SLA
+
+Email: apoio@..., Phone: 840-123-456 (8 AM–6 PM), Emergency: 843-999-999.
+SLA: 1st response < 30s; standard issue resolution within 48h.
+Escalation: L1 → L2 → L3.
+
+Scenario: Regional outage → status page update, ETA 3h, compensation bundle auto-credited.
+
+PAGE 15 – FAQS AND TUTORIALS
+
+Check balance: *124#, Add-ons: *125#, Roaming: *127#, Transfer: *126#.
+Tutorial videos available in App and on YouTube.
+
+PAGE 16 – SUPPORT SCENARIOS (VOICE AND CHAT)
+
+Customer: “No internet!”
+AI: “Would you like step-by-step guidance or a technician?”
+Interruptions supported; AI switches context as needed.
+
+Scenario: User interrupts mid-answer; AI pauses, confirms intent, resumes flow.
+
+PAGE 17 – DIGITAL INCLUSION AND VULNERABLE CUSTOMERS
+
+Social tariffs for students and seniors.
+Priority line: 848.
+Text-to-speech options for hearing-impaired users.
+
+PAGE 18 – DIGITAL EDUCATION AND LITERACY
+
+Workshops in schools and communities.
+Guides on Hotspot setup, App usage, and security.
+Program “Digital Women” for female entrepreneurship.
+
+PAGE 19 – CAMPAIGNS AND PROMOTIONS
+
+Digital Week (2x data), Youth Plan (50% off), Africa Roaming (30% off).
+Automatic refunds for activation errors.
+Scenario: Promo bundle fails to activate → auto-credit issued.
+
+PAGE 20 – TERMS, RIGHTS, AND CLOSING
+
+Customer Rights: Clear information, privacy, portability.
+Responsibilities: Pay on time, maintain accurate data.
+Closure: By request or breach; balances settled before termination.
+Thank You: Thank you for choosing Mozaitelecomunicação — connecting Mozambique to the future.

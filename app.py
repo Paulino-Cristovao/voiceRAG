@@ -1,11 +1,12 @@
 """
-Improved Voice RAG System with LangChain
+Improved Voice RAG System with LangChain + ElevenLabs
+- Async/await for maximum performance
+- ElevenLabs for human-like voice
 - Conversation memory (remembers context)
 - Streaming responses (faster perceived speed)
 - Bilingual support (Portuguese + English)
 - Natural conversational tone
 - Response caching for speed
-- Only uses OpenAI API
 """
 
 import os
@@ -24,8 +25,10 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from openai import OpenAI
+from openai import OpenAI, AsyncOpenAI
 from sklearn.metrics.pairwise import cosine_similarity
+from elevenlabs.client import AsyncElevenLabs
+from elevenlabs import VoiceSettings
 
 # LangChain imports
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -42,11 +45,26 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 if not OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY environment variable is required")
 
+ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY", "")
+USE_ELEVENLABS = bool(ELEVEN_API_KEY)
+
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
 CHAT_MODEL = os.getenv("CHAT_MODEL", "gpt-4o-mini")
+
+# ElevenLabs configuration
+ELEVEN_VOICE_ID_EN = os.getenv("ELEVEN_VOICE_ID_EN", "21m00Tcm4TlvDq8ikWAM")  # Rachel
+ELEVEN_VOICE_ID_PT = os.getenv("ELEVEN_VOICE_ID_PT", "21m00Tcm4TlvDq8ikWAM")  # Rachel (multilingual)
+ELEVEN_MODEL = os.getenv("ELEVEN_MODEL", "eleven_multilingual_v2")
+ELEVEN_STABILITY = float(os.getenv("ELEVEN_STABILITY", "0.5"))
+ELEVEN_SIMILARITY_BOOST = float(os.getenv("ELEVEN_SIMILARITY_BOOST", "0.75"))
+ELEVEN_STYLE = float(os.getenv("ELEVEN_STYLE", "0.0"))
+ELEVEN_USE_SPEAKER_BOOST = os.getenv("ELEVEN_USE_SPEAKER_BOOST", "true").lower() == "true"
+
+# OpenAI TTS (fallback)
 TTS_MODEL = os.getenv("TTS_MODEL", "tts-1")
 TTS_VOICE = os.getenv("TTS_VOICE", "nova")
 TTS_SPEED = float(os.getenv("TTS_SPEED", "1.1"))
+
 TOP_K = int(os.getenv("TOP_K", "5"))
 
 # Performance optimization settings
@@ -57,12 +75,24 @@ SEMANTIC_CACHE_THRESHOLD = float(os.getenv("SEMANTIC_CACHE_THRESHOLD", "0.85"))
 print("📋 Configuration:")
 print(f"  - Embedding Model: {EMBEDDING_MODEL}")
 print(f"  - Chat Model: {CHAT_MODEL}")
-print(f"  - TTS: {TTS_MODEL} ({TTS_VOICE} @ {TTS_SPEED}x)")
+if USE_ELEVENLABS:
+    print(f"  - TTS: ElevenLabs {ELEVEN_MODEL} (Rachel voice)")
+    print(f"  - Voice Settings: stability={ELEVEN_STABILITY}, similarity={ELEVEN_SIMILARITY_BOOST}")
+else:
+    print(f"  - TTS: OpenAI {TTS_MODEL} ({TTS_VOICE} @ {TTS_SPEED}x)")
 print(f"  - Top K Results: {TOP_K}")
 print(f"  - API Key: {OPENAI_API_KEY[:8]}...{OPENAI_API_KEY[-4:]}")
 
 # Initialize clients
 client = OpenAI(api_key=OPENAI_API_KEY)
+async_openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+
+if USE_ELEVENLABS:
+    eleven_client = AsyncElevenLabs(api_key=ELEVEN_API_KEY)
+    print("✅ ElevenLabs client initialized")
+else:
+    eleven_client = None
+    print("⚠️  ElevenLabs not configured - using OpenAI TTS")
 
 
 class LangChainVoiceRAG:
@@ -411,15 +441,15 @@ EXEMPLOS NATURAIS:
         print(f"✅ Response: {full_response[:100]}...")
         return full_response
 
-    def transcribe_audio(self, audio_bytes):
-        """Transcribe audio using Whisper"""
+    async def transcribe_audio(self, audio_bytes):
+        """Transcribe audio using Whisper (async)"""
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp_file:
             tmp_file.write(audio_bytes)
             tmp_path = tmp_file.name
 
         try:
             with open(tmp_path, "rb") as audio_file:
-                transcript = client.audio.transcriptions.create(
+                transcript = await async_openai_client.audio.transcriptions.create(
                     model="whisper-1",
                     file=audio_file
                 )
@@ -427,9 +457,33 @@ EXEMPLOS NATURAIS:
         finally:
             os.unlink(tmp_path)
 
-    def text_to_speech(self, text: str) -> bytes:
-        """Convert text to speech with streaming"""
-        response = client.audio.speech.create(
+    async def text_to_speech_elevenlabs(self, text: str, language: str = 'en') -> bytes:
+        """Convert text to speech using ElevenLabs (ultra-realistic voice)"""
+        voice_id = ELEVEN_VOICE_ID_EN if language == 'en' else ELEVEN_VOICE_ID_PT
+
+        voice_settings = VoiceSettings(
+            stability=ELEVEN_STABILITY,
+            similarity_boost=ELEVEN_SIMILARITY_BOOST,
+            style=ELEVEN_STYLE,
+            use_speaker_boost=ELEVEN_USE_SPEAKER_BOOST
+        )
+
+        # Generate audio using async streaming
+        audio_chunks = []
+        async for chunk in eleven_client.text_to_speech.stream(
+            text=text,
+            voice_id=voice_id,
+            model_id=ELEVEN_MODEL,
+            voice_settings=voice_settings
+        ):
+            if chunk:
+                audio_chunks.append(chunk)
+
+        return b''.join(audio_chunks)
+
+    async def text_to_speech_openai(self, text: str) -> bytes:
+        """Convert text to speech using OpenAI (fallback)"""
+        response = await async_openai_client.audio.speech.create(
             model=TTS_MODEL,
             voice=TTS_VOICE,
             input=text,
@@ -437,10 +491,17 @@ EXEMPLOS NATURAIS:
         )
 
         audio_data = io.BytesIO()
-        for chunk in response.iter_bytes(chunk_size=4096):
+        async for chunk in response.iter_bytes(chunk_size=4096):
             audio_data.write(chunk)
 
         return audio_data.getvalue()
+
+    async def text_to_speech(self, text: str, language: str = 'en') -> bytes:
+        """Convert text to speech - uses ElevenLabs if available, OpenAI as fallback"""
+        if USE_ELEVENLABS:
+            return await self.text_to_speech_elevenlabs(text, language)
+        else:
+            return await self.text_to_speech_openai(text)
 
 
 # Initialize service
@@ -475,7 +536,7 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         # Send bilingual greeting
         greeting = "Olá! Bem-vindo à Mozaitelecomunicação. Como posso ajudá-lo hoje? / Hello! Welcome to Mozaitelecomunicação. How can I help you today?"
-        audio_data = rag_service.text_to_speech(greeting)
+        audio_data = await rag_service.text_to_speech(greeting, language='pt')
 
         await websocket.send_json({
             "type": "message",
@@ -490,7 +551,7 @@ async def websocket_endpoint(websocket: WebSocket):
             # Handle interrupt
             if data["type"] == "interrupt":
                 interrupt_msg = "Entendo. Por favor, faça a sua pergunta novamente. / I understand. Please ask your question again."
-                audio_data = rag_service.text_to_speech(interrupt_msg)
+                audio_data = await rag_service.text_to_speech(interrupt_msg, language='pt')
                 await websocket.send_json({
                     "type": "message",
                     "text": interrupt_msg,
@@ -502,8 +563,8 @@ async def websocket_endpoint(websocket: WebSocket):
             elif data["type"] == "audio":
                 audio_bytes = base64.b64decode(data["audio"])
 
-                # Transcribe
-                query = rag_service.transcribe_audio(audio_bytes)
+                # Transcribe (async now)
+                query = await rag_service.transcribe_audio(audio_bytes)
 
                 await websocket.send_json({
                     "type": "transcription",
@@ -512,13 +573,16 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 if not query.strip():
                     msg = "Não ouvi nada. Por favor repita a sua pergunta. / I didn't hear anything. Please repeat your question."
-                    audio_data = rag_service.text_to_speech(msg)
+                    audio_data = await rag_service.text_to_speech(msg, language='pt')
                     await websocket.send_json({
                         "type": "message",
                         "text": msg,
                         "audio": base64.b64encode(audio_data).decode()
                     })
                     continue
+
+                # Detect language for proper voice
+                detected_lang = rag_service.detect_language(query)
 
                 # Add to history BEFORE generating response
                 conversation_history.append({"role": "user", "content": query})
@@ -536,8 +600,8 @@ async def websocket_endpoint(websocket: WebSocket):
                 # Add response to history
                 conversation_history.append({"role": "assistant", "content": response})
 
-                # Convert to speech
-                audio_data = rag_service.text_to_speech(response)
+                # Convert to speech with proper language voice (async + parallel)
+                audio_data = await rag_service.text_to_speech(response, language=detected_lang)
 
                 await websocket.send_json({
                     "type": "response",
@@ -548,7 +612,7 @@ async def websocket_endpoint(websocket: WebSocket):
             # Handle end session
             elif data["type"] == "end":
                 goodbye_msg = "Obrigado por contactar a Mozaitelecomunicação. Tenha um bom dia! / Thank you for contacting Mozaitelecomunicação. Have a great day!"
-                audio_data = rag_service.text_to_speech(goodbye_msg)
+                audio_data = await rag_service.text_to_speech(goodbye_msg, language='pt')
                 await websocket.send_json({
                     "type": "goodbye",
                     "text": goodbye_msg,
