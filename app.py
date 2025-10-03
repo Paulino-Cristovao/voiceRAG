@@ -15,7 +15,8 @@ import tempfile
 import pickle
 import hashlib
 from functools import lru_cache
-from typing import List, Dict, Tuple, Optional, Union
+from typing import List, Dict, Tuple, Optional, Union, AsyncGenerator
+import asyncio
 
 import numpy as np
 import faiss
@@ -24,6 +25,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from openai import OpenAI
+from sklearn.metrics.pairwise import cosine_similarity
 
 # LangChain imports
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -47,6 +49,11 @@ TTS_VOICE = os.getenv("TTS_VOICE", "nova")
 TTS_SPEED = float(os.getenv("TTS_SPEED", "1.1"))
 TOP_K = int(os.getenv("TOP_K", "5"))
 
+# Performance optimization settings
+CACHE_SIZE = int(os.getenv("CACHE_SIZE", "200"))
+CONTEXT_MAX_CHARS = int(os.getenv("CONTEXT_MAX_CHARS", "2500"))
+SEMANTIC_CACHE_THRESHOLD = float(os.getenv("SEMANTIC_CACHE_THRESHOLD", "0.85"))
+
 print("📋 Configuration:")
 print(f"  - Embedding Model: {EMBEDDING_MODEL}")
 print(f"  - Chat Model: {CHAT_MODEL}")
@@ -68,8 +75,9 @@ class LangChainVoiceRAG:
         with open("data/metadata.pkl", "rb") as f:
             self.metadata = pickle.load(f)
 
-        # Response cache for faster repeated queries
+        # Enhanced caching: Response + Semantic
         self.response_cache = {}
+        self.semantic_cache: Dict[str, Tuple[np.ndarray, List[Dict]]] = {}
 
         # Initialize LangChain components
         self.embeddings = OpenAIEmbeddings(
@@ -102,22 +110,38 @@ class LangChainVoiceRAG:
 
         return 'en' if english_count > portuguese_count else 'pt'
 
-    @lru_cache(maxsize=100)
+    def detect_sentiment(self, text: str) -> str:
+        """Detect user sentiment for empathy"""
+        negative_words = ['frustrado', 'problema', 'não funciona', 'ruim', 'péssimo', 'horrível',
+                         'frustrated', 'problem', 'not working', 'broken', 'issue', 'terrible', 'bad']
+        text_lower = text.lower()
+        return 'negative' if any(word in text_lower for word in negative_words) else 'neutral'
+
+    @lru_cache(maxsize=CACHE_SIZE)
     def _embed_query_cached(self, query: str):
         """Cached embedding for speed"""
         return self.embeddings.embed_query(query)
 
     def search_knowledge_base(self, query: str, k: int = TOP_K) -> List[Dict]:
-        """Search FAISS with query (with caching)"""
-        # Check cache first
+        """Search FAISS with semantic caching"""
         cache_key = hashlib.md5(query.encode()).hexdigest()
+
+        # Exact cache hit
         if cache_key in self.response_cache:
             return self.response_cache[cache_key]
 
         query_embedding = self._embed_query_cached(query)
-        query_vector = np.array([query_embedding], dtype='float32')
+        query_vector_array = np.array([query_embedding], dtype='float32')
 
-        distances, indices = self.index.search(query_vector, k)
+        # Semantic cache: Check for similar queries
+        for cached_key, (cached_emb, cached_results) in self.semantic_cache.items():
+            similarity = cosine_similarity([query_embedding], [cached_emb])[0][0]
+            if similarity > SEMANTIC_CACHE_THRESHOLD:
+                print(f"  ⚡ Semantic cache hit! Similarity: {similarity:.2f}")
+                return cached_results
+
+        # FAISS search
+        distances, indices = self.index.search(query_vector_array, k)
 
         results = []
         for idx, dist in zip(indices[0], distances[0]):
@@ -130,8 +154,15 @@ class LangChainVoiceRAG:
                     "distance": float(dist)
                 })
 
-        # Cache results
+        # Cache both exact and semantic
         self.response_cache[cache_key] = results
+        self.semantic_cache[cache_key] = (np.array(query_embedding), results)
+
+        # Limit semantic cache size
+        if len(self.semantic_cache) > CACHE_SIZE:
+            oldest_key = list(self.semantic_cache.keys())[0]
+            del self.semantic_cache[oldest_key]
+
         return results
 
     def check_profanity(self, text: str) -> Tuple[bool, Optional[str]]:
@@ -189,8 +220,12 @@ class LangChainVoiceRAG:
 
         return True
 
-    def create_chain_with_memory(self, conversation_history: List[Dict], language: str = 'pt'):
-        """Create LangChain chain with conversation memory and language support"""
+    def create_chain_with_memory(self, conversation_history: List[Dict], language: str = 'pt', sentiment: str = 'neutral'):
+        """Create LangChain chain with conversation memory, language, and empathy support"""
+
+        # Empathy injection based on sentiment
+        empathy_en = "\n\nEMPATHY: If user seems frustrated, start with: 'I'm sorry to hear that, let's fix this together.'" if sentiment == 'negative' else ""
+        empathy_pt = "\n\nEMPATIA: Se o utilizador parece frustrado, comece com: 'Lamento ouvir isso, vamos resolver juntos.'" if sentiment == 'negative' else ""
 
         # Bilingual system prompts with natural fillers
         if language == 'en':
@@ -217,7 +252,7 @@ EXAMPLES OF NATURAL RESPONSES:
 - "Yes, of course! The Premium 5G plan costs..."
 - "I see. Let me help you with that..."
 - "Sure! For students, I'd recommend..."
-"""
+""" + empathy_en
 
         else:  # Portuguese
             system_template = """Você é um agente amigável de apoio ao cliente da Mozaitelecomunicação em Moçambique.
@@ -243,7 +278,7 @@ EXEMPLOS DE RESPOSTAS NATURAIS:
 - "Sim, claro! O plano Premium 5G custa..."
 - "Percebo. Deixe-me ajudá-lo com isso..."
 - "Pois! Para estudantes, recomendo..."
-"""
+""" + empathy_pt
 
         # Create prompt template
         prompt = ChatPromptTemplate.from_messages([
@@ -281,8 +316,8 @@ EXEMPLOS DE RESPOSTAS NATURAIS:
 
         full_context = "\n\n".join(context_parts)
 
-        # If context is too large (>3000 chars), summarize
-        if len(full_context) > 3000:
+        # If context is too large, summarize with tighter threshold
+        if len(full_context) > CONTEXT_MAX_CHARS:
             prompt = "Summarize and merge these docs concisely, keeping all key facts:" if language == 'en' else "Resume e combine estes documentos de forma concisa, mantendo todos os factos-chave:"
 
             summary_response = client.chat.completions.create(
@@ -300,10 +335,11 @@ EXEMPLOS DE RESPOSTAS NATURAIS:
 
     def generate_response(self, query: str, context_chunks: List[Dict],
                          conversation_history: List[Dict]) -> str:
-        """Generate response with caching and bilingual support"""
+        """Generate response with caching, empathy, and bilingual support"""
 
-        # Detect language
+        # Detect language and sentiment
         language = self.detect_language(query)
+        sentiment = self.detect_sentiment(query)
 
         # Check profanity
         has_profanity, profanity_msg = self.check_profanity(query)
@@ -319,12 +355,14 @@ EXEMPLOS DE RESPOSTAS NATURAIS:
         # Log
         print(f"\n🔍 Query: {query}")
         print(f"🌐 Language: {language.upper()}")
+        print(f"😊 Sentiment: {sentiment.upper()}")
         print(f"📚 Retrieved {len(context_chunks)} chunks")
+        print(f"📏 Context size: {len(context)} chars")
         print(f"🎯 Relevance: {'RELEVANT' if is_relevant else 'NOT RELEVANT'}")
         print(f"💬 History: {len(conversation_history)} messages")
 
-        # Create and invoke chain
-        chain = self.create_chain_with_memory(conversation_history, language)
+        # Create and invoke chain with empathy
+        chain = self.create_chain_with_memory(conversation_history, language, sentiment)
 
         response_stream = chain.stream({
             "context": context,
