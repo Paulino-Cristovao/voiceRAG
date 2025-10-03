@@ -57,7 +57,7 @@ PÁGINA 3 - POLÍTICA DE ATRASOS E PENALIDADES
 ====================================================================
 
 **Pagamento em Atraso:**
-- Após **15 dias**, aplica-se uma taxa de atraso de **50 MZN**;
+- Após **15 dias**, aplica-se uma taxa de atraso de **50 meticais**;
 - Após **30 dias**, o serviço é **suspenso automaticamente**;
 - Após **60 dias**, a conta pode ser **encerrada por inatividade**.
 
@@ -83,25 +83,25 @@ PÁGINA 4 - PLANOS DE SERVIÇO E PACOTES
 - 50GB de dados 5G de alta velocidade;
 - Chamadas e SMS ilimitados para todas as redes nacionais;
 - Roaming internacional incluído (20 países);
-- Preço: 1.500 MZN/mês.
+- Preço: 1.500 meticais por mês.
 
 **Plano Básico 4G**
 - 10GB de dados 4G;
 - 500 minutos de chamadas nacionais;
 - SMS ilimitados;
-- Preço: 500 MZN/mês.
+- Preço: 500 meticais por mês.
 
 **Plano Familiar 5G**
 - 100GB de dados partilhados;
 - Até 4 linhas associadas;
 - Chamadas ilimitadas entre membros da família;
-- Preço: 2.500 MZN/mês.
+- Preço: 2.500 meticais por mês.
 
 **Plano Empresarial PRO**
 - 200GB de dados;
 - 2.000 minutos para todas as redes;
 - Dashboard de gestão e relatórios;
-- Preço: 5.000 MZN/mês.
+- Preço: 5.000 meticais por mês.
 
 **Adicionais:**
 - Pacotes extra de dados disponíveis (*125#);
@@ -131,7 +131,7 @@ Definições → Redes Móveis → APN → Novo:
 
 **Problemas de SIM**
 - SIM perdido/roubado: Ligue 840-123-456
-- Substituição: 100 MZN
+- Substituição: 100 meticais
 - Entrega: 24h
 
 ====================================================================

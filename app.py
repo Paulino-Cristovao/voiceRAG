@@ -2,7 +2,9 @@
 Improved Voice RAG System with LangChain
 - Conversation memory (remembers context)
 - Streaming responses (faster perceived speed)
-- Better retrieval with full context
+- Bilingual support (Portuguese + English)
+- Natural conversational tone
+- Response caching for speed
 - Only uses OpenAI API
 """
 
@@ -19,15 +21,13 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from openai import OpenAI
 from typing import List, Dict
-import json
+import hashlib
+from functools import lru_cache
 
 # LangChain imports
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.schema import HumanMessage, AIMessage, SystemMessage
-from langchain.memory import ConversationBufferWindowMemory
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
+from langchain.schema import HumanMessage, AIMessage
 
 load_dotenv()
 
@@ -51,7 +51,7 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 class LangChainVoiceRAG:
-    """Enhanced RAG service with LangChain for conversation memory"""
+    """Enhanced RAG service with LangChain, caching, and bilingual support"""
 
     def __init__(self):
         # Load FAISS index
@@ -59,6 +59,9 @@ class LangChainVoiceRAG:
 
         with open("data/metadata.pkl", "rb") as f:
             self.metadata = pickle.load(f)
+
+        # Response cache for faster repeated queries
+        self.response_cache = {}
 
         # Initialize LangChain components
         self.embeddings = OpenAIEmbeddings(
@@ -68,8 +71,8 @@ class LangChainVoiceRAG:
 
         self.llm = ChatOpenAI(
             model=CHAT_MODEL,
-            temperature=0.2,
-            streaming=True,  # Enable streaming
+            temperature=0.3,  # Slightly higher for more natural responses
+            streaming=True,
             openai_api_key=OPENAI_API_KEY
         )
 
@@ -78,9 +81,32 @@ class LangChainVoiceRAG:
         print(f"  - Metadata: {len(self.metadata)} chunks")
         print(f"  - Knowledge base ready")
 
+    def detect_language(self, text: str) -> str:
+        """Detect if query is in English or Portuguese"""
+        english_indicators = ['how', 'what', 'when', 'where', 'why', 'is', 'are', 'do', 'does',
+                            'can', 'support', 'help', 'please', 'thank', 'hello', 'hi']
+        portuguese_indicators = ['como', 'qual', 'quando', 'onde', 'porque', 'é', 'são',
+                               'posso', 'pode', 'apoio', 'ajuda', 'obrigado', 'olá']
+
+        text_lower = text.lower()
+        english_count = sum(1 for word in english_indicators if word in text_lower)
+        portuguese_count = sum(1 for word in portuguese_indicators if word in text_lower)
+
+        return 'en' if english_count > portuguese_count else 'pt'
+
+    @lru_cache(maxsize=100)
+    def _embed_query_cached(self, query: str):
+        """Cached embedding for speed"""
+        return self.embeddings.embed_query(query)
+
     def search_knowledge_base(self, query: str, k: int = TOP_K) -> List[Dict]:
-        """Search FAISS with query"""
-        query_embedding = self.embeddings.embed_query(query)
+        """Search FAISS with query (with caching)"""
+        # Check cache first
+        cache_key = hashlib.md5(query.encode()).hexdigest()
+        if cache_key in self.response_cache:
+            return self.response_cache[cache_key]
+
+        query_embedding = self._embed_query_cached(query)
         query_vector = np.array([query_embedding], dtype='float32')
 
         distances, indices = self.index.search(query_vector, k)
@@ -96,6 +122,8 @@ class LangChainVoiceRAG:
                     "distance": float(dist)
                 })
 
+        # Cache results
+        self.response_cache[cache_key] = results
         return results
 
     def check_profanity(self, text: str):
@@ -109,7 +137,11 @@ class LangChainVoiceRAG:
         text_lower = text.lower()
         for word in profanity_words:
             if word in text_lower:
-                return True, "Desculpe, não posso responder a perguntas com linguagem inapropriada. Por favor, reformule sua pergunta de forma respeitosa."
+                lang = self.detect_language(text)
+                if lang == 'en':
+                    return True, "I'm sorry, I cannot respond to questions with inappropriate language. Please rephrase your question respectfully."
+                else:
+                    return True, "Desculpe, não posso responder a perguntas com linguagem inapropriada. Por favor, reformule sua pergunta de forma respeitosa."
 
         return False, None
 
@@ -119,13 +151,18 @@ class LangChainVoiceRAG:
             return False
 
         telecom_keywords = {
+            # Portuguese
             'fatura', 'pagar', 'pagamento', 'plano', 'internet', 'dados', 'saldo',
             'apn', '5g', '4g', 'sim', 'chip', 'serviço', 'chamadas', 'minutos',
             'cobertura', 'rede', 'sinal', 'roaming', 'recarga', 'configuração',
             'telefone', 'celular', 'móvel', 'número', 'linha', 'conta', 'suporte',
             'modem', 'router', 'wifi', 'banda', 'velocidade', 'contacto', 'email',
             'escritório', 'app', 'aplicativo', 'mpesa', 'emola', 'banco', 'apoio',
-            'recomenda', 'estudante', 'universitário', 'jovem', 'família', 'empresarial'
+            'recomenda', 'estudante', 'universitário', 'jovem', 'família', 'empresarial',
+            # English
+            'bill', 'pay', 'payment', 'plan', 'internet', 'data', 'balance',
+            'network', 'signal', 'call', 'minutes', 'coverage', 'support', 'help',
+            'phone', 'mobile', 'account', 'email', 'office', 'price', 'cost'
         }
 
         query_lower = query.lower()
@@ -145,32 +182,61 @@ class LangChainVoiceRAG:
 
         return True
 
-    def create_chain_with_memory(self, conversation_history: List[Dict]):
-        """Create LangChain chain with conversation memory"""
+    def create_chain_with_memory(self, conversation_history: List[Dict], language: str = 'pt'):
+        """Create LangChain chain with conversation memory and language support"""
 
-        # System prompt
-        system_template = """Você é um assistente de atendimento ao cliente da Mozaitelecomunicação.
+        # Bilingual system prompts
+        if language == 'en':
+            system_template = """You are a helpful customer service assistant for Mozaitelecomunicação, a telecommunications company in Mozambique.
+
+AVAILABLE DOCUMENTATION:
+{context}
+
+IMPORTANT RULES:
+
+1. ANSWER ONLY with information EXPLICITLY in the DOCUMENTATION above
+2. If information is NOT in documentation, say:
+   "I'm sorry, I don't have that specific information. Please contact our support team at apoio@mozaitelecomunicacao.co.mz or visit our office at Av. Julius Nyerere, Nº 2500, Maputo."
+
+3. NEVER invent information
+4. USE conversation history to understand context and references like "that", "this", "it"
+5. If question requires admin action (plan change, cancellation, complaint), redirect to apoio@mozaitelecomunicacao.co.mz
+
+6. Be friendly, helpful, and conversational (like talking to a friend)
+7. Use natural language - avoid being too formal or robotic
+8. Keep responses concise but complete (2-4 sentences)
+
+IMPORTANT:
+- If user asks "Which one do you recommend?" or "Do you have something specific?", USE HISTORY to understand context
+- Phrases like "that plan", "this option" refer to previous topic in history
+- For recommendations, suggest the most suitable plan based on available documentation
+- Be warm and personable in your responses"""
+
+        else:  # Portuguese
+            system_template = """Você é um assistente prestativo de atendimento ao cliente da Mozaitelecomunicação, uma empresa de telecomunicações em Moçambique.
 
 DOCUMENTAÇÃO DISPONÍVEL:
 {context}
 
 REGRAS IMPORTANTES:
 
-1. RESPONDA APENAS com informações da DOCUMENTAÇÃO acima
+1. RESPONDA APENAS com informações EXPLICITAMENTE presentes na DOCUMENTAÇÃO acima
 2. Se a informação NÃO estiver na documentação, diga:
-   "Desculpe, não tenho essa informação específica. Por favor, contacte apoio@mozaitelecomunicacao.co.mz ou visite nosso escritório na Av. Julius Nyerere, Nº 2500, Maputo."
+   "Desculpe, não tenho essa informação específica. Por favor, contacte nossa equipa de apoio em apoio@mozaitelecomunicacao.co.mz ou visite nosso escritório na Av. Julius Nyerere, Nº 2500, Maputo."
 
 3. NUNCA invente informações
-4. USE o histórico da conversa para entender contexto e referências como "esse", "qual", "e"
+4. USE o histórico da conversa para entender contexto e referências como "esse", "qual", "aquilo"
 5. Se a pergunta requer ação administrativa (mudança, cancelamento, reclamação), redirecione para apoio@mozaitelecomunicacao.co.mz
 
-6. Seja profissional, prestativo e conciso (2-4 frases)
-7. Responda em Português de Moçambique
+6. Seja amigável, prestativo e conversacional (como falar com um amigo)
+7. Use linguagem natural - evite ser muito formal ou robótico
+8. Mantenha respostas concisas mas completas (2-4 frases)
 
 IMPORTANTE:
-- Se o usuário perguntar "E qual você recomenda?" ou "Tem um serviço específico?", use o HISTÓRICO para entender o contexto
+- Se o usuário perguntar "E qual você recomenda?" ou "Tem algo específico?", use o HISTÓRICO para entender o contexto
 - Frases como "esse plano", "essa opção" referem-se ao tópico anterior no histórico
-- Para recomendações, sugira o plano mais adequado baseado na documentação disponível"""
+- Para recomendações, sugira o plano mais adequado baseado na documentação disponível
+- Seja caloroso e pessoal nas suas respostas"""
 
         # Create prompt template
         prompt = ChatPromptTemplate.from_messages([
@@ -196,59 +262,16 @@ IMPORTANTE:
             }
             | prompt
             | self.llm
-            | StrOutputParser()
         )
 
         return chain
 
-    async def generate_response_streaming(self, query: str, context_chunks: List[Dict],
-                                         conversation_history: List[Dict]):
-        """Generate response with streaming (yields tokens as they come)"""
-
-        # Check profanity
-        has_profanity, profanity_msg = self.check_profanity(query)
-        if has_profanity:
-            yield profanity_msg
-            return
-
-        # Check relevance
-        is_relevant = self.check_relevance(query, context_chunks)
-
-        # Build context
-        context_parts = []
-        for i, chunk in enumerate(context_chunks, 1):
-            # Include FULL chunk text, not truncated
-            context_parts.append(f"[Documento {i}]\n{chunk['text']}")
-
-        context = "\n\n".join(context_parts)
-
-        # Log
-        print(f"\n🔍 Query: {query}")
-        print(f"📚 Retrieved {len(context_chunks)} chunks")
-        print(f"🎯 Relevance: {'RELEVANT' if is_relevant else 'NOT RELEVANT'}")
-        print(f"💬 Conversation history: {len(conversation_history)} messages")
-
-        # Create chain with memory
-        chain = self.create_chain_with_memory(conversation_history)
-
-        # Stream response
-        full_response = ""
-        try:
-            async for chunk in chain.astream({
-                "context": context,
-                "question": query
-            }):
-                full_response += chunk
-                yield chunk
-        except Exception as e:
-            print(f"Error streaming: {e}")
-            yield "Desculpe, ocorreu um erro. Por favor, tente novamente."
-
-        print(f"✅ Response complete: {len(full_response)} chars")
-
     def generate_response(self, query: str, context_chunks: List[Dict],
                          conversation_history: List[Dict]) -> str:
-        """Non-streaming version for compatibility"""
+        """Generate response with caching and bilingual support"""
+
+        # Detect language
+        language = self.detect_language(query)
 
         # Check profanity
         has_profanity, profanity_msg = self.check_profanity(query)
@@ -261,26 +284,33 @@ IMPORTANTE:
         # Build context with FULL text
         context_parts = []
         for i, chunk in enumerate(context_chunks, 1):
-            context_parts.append(f"[Documento {i}]\n{chunk['text']}")
+            context_parts.append(f"[Document {i}]\n{chunk['text']}")
 
         context = "\n\n".join(context_parts)
 
         # Log
         print(f"\n🔍 Query: {query}")
+        print(f"🌐 Language: {language.upper()}")
         print(f"📚 Retrieved {len(context_chunks)} chunks")
         print(f"🎯 Relevance: {'RELEVANT' if is_relevant else 'NOT RELEVANT'}")
         print(f"💬 History: {len(conversation_history)} messages")
 
         # Create and invoke chain
-        chain = self.create_chain_with_memory(conversation_history)
+        chain = self.create_chain_with_memory(conversation_history, language)
 
-        response = chain.invoke({
+        response_stream = chain.stream({
             "context": context,
             "question": query
         })
 
-        print(f"✅ Response: {response[:100]}...")
-        return response
+        # Collect full response
+        full_response = ""
+        for chunk in response_stream:
+            if hasattr(chunk, 'content'):
+                full_response += chunk.content
+
+        print(f"✅ Response: {full_response[:100]}...")
+        return full_response
 
     def transcribe_audio(self, audio_bytes):
         """Transcribe audio using Whisper"""
@@ -292,8 +322,7 @@ IMPORTANTE:
             with open(tmp_path, "rb") as audio_file:
                 transcript = client.audio.transcriptions.create(
                     model="whisper-1",
-                    file=audio_file,
-                    language="pt"
+                    file=audio_file
                 )
             return transcript.text
         finally:
@@ -304,7 +333,8 @@ IMPORTANTE:
         response = client.audio.speech.create(
             model="tts-1",
             voice="nova",
-            input=text
+            input=text,
+            speed=1.1  # Slightly faster for more natural feel
         )
 
         audio_data = io.BytesIO()
@@ -341,8 +371,8 @@ async def websocket_endpoint(websocket: WebSocket):
     conversation_history = []
 
     try:
-        # Send greeting
-        greeting = "Olá! Bem-vindo à Mozaitelecomunicação. Como posso ajudá-lo hoje?"
+        # Send bilingual greeting
+        greeting = "Olá! Bem-vindo à Mozaitelecomunicação. Como posso ajudá-lo hoje? / Hello! Welcome to Mozaitelecomunicação. How can I help you today?"
         audio_data = rag_service.text_to_speech(greeting)
 
         await websocket.send_json({
@@ -357,7 +387,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # Handle interrupt
             if data["type"] == "interrupt":
-                interrupt_msg = "Entendo. Por favor, faça a sua pergunta novamente."
+                interrupt_msg = "Entendo. Por favor, faça a sua pergunta novamente. / I understand. Please ask your question again."
                 audio_data = rag_service.text_to_speech(interrupt_msg)
                 await websocket.send_json({
                     "type": "message",
@@ -379,7 +409,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 })
 
                 if not query.strip():
-                    msg = "Não ouvi nada. Por favor repita a sua pergunta."
+                    msg = "Não ouvi nada. Por favor repita a sua pergunta. / I didn't hear anything. Please repeat your question."
                     audio_data = rag_service.text_to_speech(msg)
                     await websocket.send_json({
                         "type": "message",
@@ -391,7 +421,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 # Add to history BEFORE generating response
                 conversation_history.append({"role": "user", "content": query})
 
-                # Search knowledge base
+                # Search knowledge base (with caching)
                 context_chunks = rag_service.search_knowledge_base(query)
 
                 # Generate response WITH conversation history
@@ -415,7 +445,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # Handle end session
             elif data["type"] == "end":
-                goodbye_msg = "Obrigado por contactar a Mozaitelecomunicação. Tenha um bom dia!"
+                goodbye_msg = "Obrigado por contactar a Mozaitelecomunicação. Tenha um bom dia! / Thank you for contacting Mozaitelecomunicação. Have a great day!"
                 audio_data = rag_service.text_to_speech(goodbye_msg)
                 await websocket.send_json({
                     "type": "goodbye",
