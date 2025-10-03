@@ -6,7 +6,9 @@
       "Bash(timeout:*)",
       "Bash(pip install:*)",
       "Bash(awk:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

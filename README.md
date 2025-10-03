@@ -1,224 +1,352 @@
-# 🎙️ Mozaitelecomunicação - Assistente de Voz com IA
+# 🎙️ Voice RAG - Assistente de Voz com IA
 
 Sistema de atendimento ao cliente com voz usando RAG (Retrieval-Augmented Generation) com **LangChain**, permitindo conversas naturais sobre serviços da empresa através de voz.
 
+**Empresa:** Mozaitelecomunicação (exemplo)
+**Idioma:** Português de Moçambique
+
+---
+
 ## ✨ Funcionalidades
 
-✅ **Sem Autenticação**: Qualquer usuário pode fazer perguntas imediatamente
-✅ **Memória de Conversa**: Lembra os últimos 10 intercâmbios (contexto)
-✅ **LangChain RAG**: Sistema aprimorado com melhor precisão
-✅ **Streaming Ready**: Respostas aparecem palavra por palavra (rápido)
-✅ **Base de Conhecimento**: Respostas apenas da documentação PDF
-✅ **Filtro de Profanidade**: Bloqueia linguagem inapropriada
-✅ **Interrupção**: Pode parar o AI e fazer nova pergunta
-✅ **Voz Bidirecional**: Entrada e saída por voz (Whisper + TTS)
-✅ **WebSocket Real-time**: Comunicação instantânea
-✅ **Português Moçambicano**: Totalmente em Português de Moçambique
+✅ **Sem Autenticação** - Qualquer usuário pode fazer perguntas imediatamente
+✅ **Memória de Conversa** - Lembra os últimos 10 intercâmbios para contexto
+✅ **LangChain RAG** - Sistema aprimorado com melhor precisão
+✅ **Base de Conhecimento** - Respostas apenas da documentação PDF
+✅ **Filtro de Profanidade** - Bloqueia linguagem inapropriada
+✅ **Interrupção** - Pode parar o AI e fazer nova pergunta
+✅ **Voz Bidirecional** - Entrada por voz (Whisper) e saída por voz (TTS)
+✅ **WebSocket Real-time** - Comunicação instantânea
+
+---
+
+## 🏗️ Arquitetura
+
+```
+User (Voice)
+    ↓
+Whisper (STT)
+    ↓
+LangChain RAG + Memory
+    ↓
+FAISS Vector Search → PDF Knowledge Base
+    ↓
+GPT-4o-mini (Answer)
+    ↓
+TTS (Voice)
+    ↓
+User (Voice)
+```
+
+**Tech Stack:**
+- **Backend:** FastAPI + WebSocket
+- **RAG:** LangChain + FAISS
+- **AI:** OpenAI (Whisper, GPT-4o-mini, TTS-1)
+- **Frontend:** Vanilla JS + HTML/CSS
+- **Vector DB:** FAISS (text-embedding-3-large, 3072 dims)
+
+---
 
 ## 📋 Requisitos
 
 - Python 3.10+
-- MacOS (ou Linux com ajustes)
-- Navegador moderno (Chrome, Firefox, Safari)
+- Navegador moderno (Chrome, Firefox, Safari 14+)
 - Microfone e alto-falantes
 - OpenAI API Key
 
-## 🚀 Instalação Rápida
+---
 
-### 1. Clonar e Configurar
+## 🚀 Instalação
+
+### 1. Clonar Repositório
 
 ```bash
-# Criar ambiente virtual
-python -m venv venv
-source venv/bin/activate
+git clone git@github.com:Paulino-Cristovao/voiceRAG.git
+cd voiceRAG
+```
 
-# Instalar dependências
+### 2. Criar Ambiente Virtual
+
+```bash
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+```
+
+### 3. Instalar Dependências
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configurar API Key
+### 4. Configurar API Key
 
 ```bash
-# Copiar exemplo
 cp .env.example .env
-
-# Editar .env e adicionar sua chave
-# OPENAI_API_KEY=sk-sua-chave-aqui
+# Edit .env and add your OpenAI API key:
+# OPENAI_API_KEY=sk-your-key-here
 ```
 
-### 3. Iniciar o Sistema
+### 5. Verificar Dados
 
 ```bash
-# Opção 1: Usar script automático
-./start.sh
+# Check knowledge base is indexed
+ls data/index.faiss data/metadata.pkl
 
-# Opção 2: Manualmente
-python ingest_pdfs.py  # Primeira vez apenas
-python app.py
+# If missing, rebuild index:
+python ingest_pdfs.py
 ```
 
-### 4. Abrir no Navegador
+### 6. Iniciar Servidor
+
+```bash
+python app.py
+# or
+./start.sh
+```
+
+### 7. Abrir no Navegador
 
 ```
 http://localhost:8000
 ```
 
-## 🎯 Como Usar
+**Permitir acesso ao microfone quando solicitado!**
 
-### Primeira Vez (Autenticação)
-
-1. **Abrir a interface** - O assistente saúda você
-2. **Clicar no círculo azul** - Começa a gravar (vira vermelho)
-3. **Dizer seu nome** - Ex: "João Silva", "Maria Santos"
-4. **Confirmar** - Sistema encontra e pede confirmação
-5. **Autenticado!** - Pronto para fazer perguntas
-
-### Fazer Perguntas
-
-1. **Clicar no círculo** - Grava por 5 segundos
-2. **Fazer pergunta** - Ex: "Como pago a minha fatura?"
-3. **Ouvir resposta** - Sistema responde com seu nome
-4. **Repetir** - Fazer mais perguntas
-
-### Exemplos de Perguntas
-
-- "Como posso pagar a minha fatura?"
-- "Qual é o meu plano atual?"
-- "Como consultar o saldo de dados?"
-- "O que acontece se ultrapassar o limite?"
-- "Como posso mudar de plano?"
-
-## 🛡️ Validações de Segurança
-
-O sistema inclui múltiplas camadas de validação:
-
-| Validação | Descrição |
-|-----------|-----------|
-| **Profanidade** | Rejeita palavras inapropriadas |
-| **Gibberish** | Verifica vogais e variedade de caracteres |
-| **Comprimento** | Mínimo 2, máximo 50 caracteres |
-| **Caracteres** | Apenas letras, espaços, hífens, apóstrofos |
-| **Palavras Sistema** | Rejeita "quit", "admin", "test", etc. |
-| **Tentativas** | Máximo 3 tentativas |
-| **Fuzzy Match** | 60% de similaridade para encontrar cliente |
-
-## 👥 Clientes de Teste
-
-O sistema inclui 3 clientes em `customers/customers.json`:
-
-1. **João Silva** - Plano Premium 5G
-2. **Maria Santos** - Plano Básico 4G
-3. **Carlos Machel** - Plano Familiar 5G
+---
 
 ## 📁 Estrutura do Projeto
 
 ```
-.
-├── app.py                    # FastAPI + WebSocket server
-├── static/
-│   └── index.html           # Interface web com gradiente
-├── ingest_pdfs.py           # Criar índice FAISS
-├── customers/
-│   └── customers.json       # Base de clientes
-├── pdfs/
-│   └── sample_support.txt   # Documentação da empresa
-├── data/
-│   ├── index.faiss         # Índice vetorial
-│   └── metadata.pkl        # Metadados dos chunks
-├── requirements.txt
-├── .env
-└── start.sh                # Script de inicialização
+voiceRAG/
+├── app.py                    # Main application (LangChain RAG)
+├── ingest_pdfs.py           # Build FAISS index from PDFs
+├── requirements.txt         # Python dependencies
+├── start.sh                 # Startup script
+├── .env.example             # Environment template
+├── .gitignore              # Git exclusions
+│
+├── static/                  # Frontend
+│   ├── index.html          # Main interface
+│   ├── diagnostic.html     # Browser/mic testing
+│   └── favicon.svg         # Icon
+│
+├── data/                    # Vector database
+│   ├── index.faiss         # FAISS vector index
+│   └── metadata.pkl        # Chunk metadata
+│
+├── pdfs/                    # Knowledge base (PDFs/TXT)
+│   ├── sample_support.txt  # Main documentation
+│   └── *.pdf              # Additional PDFs
+│
+└── customers/              # Customer database (optional)
+    └── customers.json      # Sample customer data
 ```
 
-## 🎨 Interface Visual
+---
 
-### Círculo Gradiente
-- **Azul (Idle)**: `linear-gradient(135deg, #667eea 0%, #764ba2 100%)`
-- **Vermelho (Gravando)**: `linear-gradient(135deg, #f093fb 0%, #f5576c 100%)`
-- **Animação Pulse**: Quando gravando
-- **Hover**: Aumenta 5%
+## 🎯 Como Usar
 
-### Estados
-- `idle` - Pronto para gravar
-- `recording` - Gravando áudio
-- `processing` - Processando resposta
+### Primeira Vez
 
-## 🔧 Arquitetura Técnica
+1. Abra `http://localhost:8000`
+2. Clique no círculo do microfone (permite acesso)
+3. Sistema saúda: "Olá! Bem-vindo à Mozaitelecomunicação..."
+4. Clique no microfone e faça sua pergunta (5 segundos)
+5. AI responde com voz
 
-### Backend (FastAPI)
+### Conversação
 
-```python
-WebSocket /ws
-├── Autenticação por voz
-│   ├── Whisper STT (português)
-│   ├── Validação de nome
-│   ├── Fuzzy matching cliente
-│   └── Confirmação
-└── Loop de conversa
-    ├── Whisper STT
-    ├── RAG search (FAISS)
-    ├── GPT-4o-mini resposta
-    └── TTS (voz)
+```
+Você: "Quanto custa o plano Premium 5G?"
+AI: "O plano Premium 5G custa 1.500 MZN/mês..."
+
+Você: "E qual você recomenda para um estudante?"
+AI: "Para estudante, recomendo o Plano Básico 4G, 500 MZN/mês..." ✅
+     ^ Lembra o contexto da pergunta anterior!
 ```
 
-### Frontend (Vanilla JS)
+### Interromper
 
-```javascript
-WebSocket conecta → Recebe greeting
-↓
-Grava áudio → Envia base64
-↓
-Recebe transcrição → Mostra
-↓
-Recebe resposta + áudio → Reproduz
-↓
-Loop
-```
+- Enquanto AI fala, clique no botão **"🛑 Interromper"**
+- Áudio para imediatamente
+- Pode fazer nova pergunta
 
-### Modelos OpenAI
+---
 
-| Componente | Modelo |
-|------------|--------|
-| STT | whisper-1 (pt) |
-| Embeddings | text-embedding-3-small |
-| Chat | gpt-4o-mini |
-| TTS | tts-1 (voz nova) |
+## 🔧 Configuração Avançada
 
-## 📝 Adicionar Mais Documentação
+### Variáveis de Ambiente (.env)
 
 ```bash
-# Adicionar PDFs ou TXTs em pdfs/
-cp seu_documento.pdf pdfs/
+OPENAI_API_KEY=sk-your-key-here
+EMBEDDING_MODEL=text-embedding-3-large  # or text-embedding-3-small
+CHAT_MODEL=gpt-4o-mini                  # or gpt-4o
+TOP_K=5                                  # Number of chunks to retrieve
+```
 
-# Reconstruir índice
+### Adicionar Documentação
+
+```bash
+# 1. Adicione PDFs ou TXT em pdfs/
+cp your_docs.pdf pdfs/
+
+# 2. Reconstrua o índice FAISS
 python ingest_pdfs.py
 
-# Reiniciar servidor
+# 3. Reinicie o servidor
 python app.py
 ```
 
-## 🔍 Debug
+### Modificar Clientes (Opcional)
 
-### Erro: "FAISS index not found"
-```bash
-python ingest_pdfs.py
+Edite `customers/customers.json`:
+
+```json
+[
+  {
+    "id": "1",
+    "name": "João Silva",
+    "plan": "Premium 5G",
+    "status": "active"
+  }
+]
 ```
 
-### Erro: "No microphone access"
-- Permitir acesso ao microfone no navegador
-- Verificar configurações do sistema
+---
 
-### Áudio não toca
-- Verificar volume
-- Testar em outro navegador
+## 🧪 Testes
 
-### WebSocket desconecta
-- Verificar firewall
-- Usar `localhost` ao invés de `127.0.0.1`
+### Teste Rápido (2 minutos)
 
-## 🌐 Deploy em Produção
+```
+1. "Quais são os vossos serviços?"
+   → Deve listar serviços da empresa
 
-### Usando Docker
+2. "Quanto custa o Premium 5G?"
+   → "1.500 MZN/mês"
+
+3. "E qual recomenda para estudante?"
+   → Deve recomendar plano (lembra contexto!) ✅
+
+4. "Qual é o email de apoio?"
+   → "apoio@mozaitelecomunicacao.co.mz"
+
+5. "Qual é o tempo hoje?"
+   → Deve rejeitar e redirecionar para suporte
+```
+
+### Diagnóstico
+
+Abra `http://localhost:8000/diagnostic` para testar:
+- Suporte do navegador
+- Acesso ao microfone
+- WebSocket
+- Reprodução de áudio
+
+---
+
+## 🐛 Troubleshooting
+
+### Microfone não funciona
+
+**Problema:** "Seu navegador não suporta gravação de áudio"
+
+**Soluções:**
+1. Use `http://localhost:8000` (não IP address)
+2. Chrome: 🔒 → Microfone → Permitir
+3. Safari: Preferências → Sites → Microfone → Permitir
+4. Teste em outro navegador (Chrome 60+, Firefox 55+, Safari 14+)
+
+### Servidor não inicia
+
+**Problema:** "Address already in use"
+
+```bash
+# Matar processo na porta 8000
+lsof -ti:8000 | xargs kill -9
+
+# Reiniciar
+python app.py
+```
+
+### Respostas incorretas
+
+**Problema:** AI não encontra informação que está no PDF
+
+```bash
+# Reconstruir índice FAISS
+python ingest_pdfs.py
+
+# Verificar chunks criados
+# Should see: "Created X chunks"
+
+# Reiniciar
+python app.py
+```
+
+### Sem memória de conversa
+
+**Problema:** AI não lembra pergunta anterior
+
+**Verificação:**
+1. Logs devem mostrar: `💬 History: X messages`
+2. Se mostrar `💬 History: 0 messages` sempre, há problema
+3. Verifique está usando a versão LangChain:
+   ```bash
+   head -5 app.py
+   # Deve conter: "from langchain_openai import"
+   ```
+
+---
+
+## 💰 Custos (OpenAI API)
+
+| Operação | Custo por Query |
+|----------|----------------|
+| Embedding (search) | ~$0.00013 |
+| GPT-4o-mini (answer) | ~$0.0001-0.0002 |
+| Whisper (STT) | ~$0.0006 |
+| TTS-1 (voice) | ~$0.00015 |
+| **Total** | **~$0.001 per query** |
+
+**Mensal (1000 queries):** ~$1.00/mês
+
+---
+
+## 📊 Performance
+
+| Métrica | Valor |
+|---------|-------|
+| Tempo de resposta | 2-4 segundos |
+| Dimensões vetoriais | 3072 (text-embedding-3-large) |
+| Memória de conversa | 10 últimas trocas |
+| Precisão (testes) | 100% (4/4 queries) |
+| Chunks na base | Variável (depende dos PDFs) |
+
+---
+
+## 🔐 Segurança
+
+- ✅ Filtro de profanidade (português + inglês)
+- ✅ Validação de entrada
+- ✅ Respostas apenas da base de conhecimento
+- ✅ Redirecionamento para suporte em casos sensíveis
+- ⚠️ **Não usar .env em produção** (usar secrets manager)
+- ⚠️ **Adicionar rate limiting** para produção
+
+---
+
+## 🚀 Deploy em Produção
+
+### Recomendações:
+
+1. **HTTPS obrigatório** (microfone requer conexão segura)
+2. **Rate limiting** (prevenir abuso)
+3. **Logging estruturado** (monitoring)
+4. **Secrets management** (não usar .env)
+5. **Load balancer** (se múltiplas instâncias)
+
+### Exemplo Docker:
 
 ```dockerfile
 FROM python:3.10-slim
@@ -226,59 +354,50 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
-EXPOSE 8000
 CMD ["python", "app.py"]
 ```
 
-### Variáveis de Ambiente
+---
 
-```bash
-OPENAI_API_KEY=sk-...
-HOST=0.0.0.0
-PORT=8000
-```
+## 📚 Documentação Adicional
 
-### HTTPS Obrigatório
-
-Para produção, use HTTPS (microfone requer contexto seguro):
-
-```bash
-# Com Caddy
-caddy reverse-proxy --from https://seu-dominio.com --to localhost:8000
-
-# Ou nginx + certbot
-```
-
-## 📊 Melhorias Futuras
-
-- [ ] Histórico de conversas
-- [ ] Dashboard de analytics
-- [ ] Suporte a múltiplos idiomas
-- [ ] Sentiment analysis
-- [ ] Transfer para humano
-- [ ] Gravação de chamadas
-- [ ] Métricas de satisfação
-
-## 🔒 Segurança
-
-- API key apenas no servidor
-- Validação de input rigorosa
-- Rate limiting (adicionar)
-- Sanitização de logs
-- CORS configurável
-
-## 📄 Licença
-
-MIT License
-
-## 🆘 Suporte
-
-Para problemas:
-1. Verificar logs do servidor
-2. Testar com cliente de exemplo
-3. Validar API key OpenAI
-4. Verificar saldo de créditos
+- **LANGCHAIN_UPGRADE.md** - Detalhes da integração LangChain + resultados de testes
+- **.env.example** - Exemplo de configuração
+- **static/diagnostic.html** - Página de diagnóstico
 
 ---
 
-**Desenvolvido para Mozaitelecomunicação 🇲🇿**
+## 🤝 Contribuir
+
+1. Fork o repositório
+2. Crie branch: `git checkout -b feature/nova-funcionalidade`
+3. Commit: `git commit -m 'Add nova funcionalidade'`
+4. Push: `git push origin feature/nova-funcionalidade`
+5. Abra Pull Request
+
+---
+
+## 📄 Licença
+
+MIT License - Veja LICENSE file para detalhes
+
+---
+
+## 🙏 Créditos
+
+- **OpenAI** - Whisper, GPT-4o-mini, TTS, Embeddings
+- **LangChain** - RAG framework
+- **FAISS** - Vector search (Facebook AI)
+- **FastAPI** - Web framework
+
+---
+
+## 📞 Suporte
+
+**GitHub Issues:** https://github.com/Paulino-Cristovao/voiceRAG/issues
+
+**Email:** (adicione seu email aqui)
+
+---
+
+**Desenvolvido com Claude Code** 🤖
