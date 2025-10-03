@@ -60,10 +60,6 @@ class LangChainVoiceRAG:
         with open("data/metadata.pkl", "rb") as f:
             self.metadata = pickle.load(f)
 
-        # Load customers
-        with open("customers/customers.json", "r") as f:
-            self.customers = json.load(f)
-
         # Initialize LangChain components
         self.embeddings = OpenAIEmbeddings(
             model=EMBEDDING_MODEL,
@@ -80,7 +76,7 @@ class LangChainVoiceRAG:
         print(f"✅ LangChain RAG initialized:")
         print(f"  - FAISS index: {self.index.ntotal} vectors")
         print(f"  - Metadata: {len(self.metadata)} chunks")
-        print(f"  - Customers: {len(self.customers)} registered")
+        print(f"  - Knowledge base ready")
 
     def search_knowledge_base(self, query: str, k: int = TOP_K) -> List[Dict]:
         """Search FAISS with query"""
