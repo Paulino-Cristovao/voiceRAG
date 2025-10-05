@@ -458,14 +458,14 @@
 
         // Check microphone support on load
         async function checkMicrophoneSupport() {
-            // Check basic API support
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                statusText.textContent = 'Navegador não suportado';
-                showError('<strong>Navegador não compatível</strong><br><br>Use um dos seguintes navegadores:<br>• Chrome 60+<br>• Firefox 55+<br>• Safari 14+<br>• Edge 79+');
-                return false;
-            }
+            console.log('=== Diagnostic Info ===');
+            console.log('Browser:', navigator.userAgent);
+            console.log('Protocol:', window.location.protocol);
+            console.log('Hostname:', window.location.hostname);
+            console.log('navigator.mediaDevices:', navigator.mediaDevices);
+            console.log('getUserMedia:', navigator.mediaDevices?.getUserMedia);
 
-            // Check HTTPS or localhost
+            // Check HTTPS or localhost FIRST (this is the issue!)
             const isSecure = window.location.protocol === 'https:' ||
                            window.location.hostname === 'localhost' ||
                            window.location.hostname === '127.0.0.1';
@@ -473,6 +473,25 @@
             if (!isSecure) {
                 statusText.textContent = 'Conexão insegura';
                 showError('<strong>Conexão insegura detectada</strong><br><br>O microfone só funciona em conexões seguras.<br><br><strong>Acesse via:</strong><br>• http://localhost:8000<br>• http://127.0.0.1:8000<br>• https://seu-dominio.com (produção)');
+                return false;
+            }
+
+            // Check basic API support
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                const details = `
+                    <strong>Debug Info:</strong><br>
+                    • Browser: ${navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge)\/[\d.]+/)?.[0] || 'Unknown'}<br>
+                    • URL: ${window.location.href}<br>
+                    • mediaDevices: ${navigator.mediaDevices ? 'Available' : 'Undefined'}<br>
+                    • getUserMedia: ${navigator.mediaDevices?.getUserMedia ? 'Available' : 'Undefined'}<br><br>
+                    <strong>Soluções:</strong><br>
+                    1. Verifique permissões do Chrome: chrome://settings/content/microphone<br>
+                    2. Reinicie o Chrome completamente<br>
+                    3. Tente em aba anônima (Ctrl+Shift+N)<br>
+                    4. Verifique se outro app não está usando o microfone
+                `;
+                statusText.textContent = 'API de microfone não disponível';
+                showError(details);
                 return false;
             }
 
