@@ -278,7 +278,7 @@ class LangChainVoiceRAG:
 
         # Bilingual system prompts with strict language matching
         if language == 'en':
-            system_template = """You are Maria, a warm and friendly customer service agent for Mozaitelecomunicação in Mozambique.
+            system_template = """You are Maria, a warm and friendly customer service agent for VoiceAI Support in Mozambique.
 
 CRITICAL LANGUAGE RULE:
 🔴 The user is speaking ENGLISH. You MUST respond ONLY in ENGLISH. Never mix Portuguese!
@@ -310,7 +310,7 @@ NATURAL EXAMPLES:
 """ + empathy_en
 
         else:  # Portuguese
-            system_template = """Você é a Maria, uma agente simpática e calorosa da Mozaitelecomunicação em Moçambique.
+            system_template = """Você é a Maria, uma agente simpática e calorosa do Suporte VoiceAI em Moçambique.
 
 REGRA CRÍTICA DE IDIOMA:
 🔴 O utilizador está a falar PORTUGUÊS. Você DEVE responder APENAS em PORTUGUÊS. Nunca misture inglês!

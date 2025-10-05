@@ -1,10 +1,10 @@
-MOZAITELECOMUNICAÇÃO – GUIA DE APOIO AO CLIENTE (Versão 2025)
+SUPORTE VOICEAI – GUIA DE APOIO AO CLIENTE (Versão 2025)
 
 Idioma: Português (Moçambique)
 
 PÁGINA 1 – INTRODUÇÃO E VISÃO GERAL
 
-Bem-vindo(a) à Mozaitelecomunicação, o seu parceiro em comunicações móveis e digitais.
+Bem-vindo(a) ao Suporte VoiceAI, o seu parceiro em comunicações móveis e digitais.
 Este guia foi criado para ajudá-lo(a) a compreender todos os serviços, planos, métodos de pagamento, canais de contacto e políticas da empresa.
 A nossa missão é garantir conectividade fiável, acessível e inclusiva para todos os moçambicanos.
 Neste guia: faturação, planos, apoio técnico, segurança, direitos e deveres do cliente.
@@ -26,10 +26,10 @@ Cenário: Cliente com deficiência auditiva solicita suporte via chat ao vivo; a
 
 PÁGINA 3 – INFORMAÇÕES DE FATURAÇÃO E MÉTODOS DE PAGAMENTO
 
-Online: www.mozaitelecomunicacao.co.mz
+Online: www.suportevoiceai.co.mz
  → Área do Cliente.
 
-App Mozaitel: Pague via M-Pesa, e-Mola ou cartão.
+Aplicação Móvel: Pague via M-Pesa, e-Mola ou cartão.
 
 USSD: *123# → Pagamentos → Fatura.
 
@@ -54,14 +54,14 @@ Dia 30: Suspensão.
 
 Dia 60: Encerramento.
 
-Cenário: Cliente recebe lembrete por SMS e efetua pagamento imediato via App; sistema envia confirmação automática.
+Cenário: Cliente recebe lembrete por SMS e efetua pagamento imediato via aplicação móvel; sistema envia confirmação automática.
 
 PÁGINA 5 – POLÍTICA DE ATRASOS, DISPUTAS E REEMBOLSOS
 
 Atrasos: Multa 50 MZN após 15 dias.
 Suspensão: 30 dias; Encerramento: 60 dias.
 Reativação: Até 2 h após pagamento.
-Disputas: Envie e-mail faturacao@… com nº de conta e descrição.
+Disputas: Envie correio eletrónico para faturacao@suportevoiceai.co.mz com nº de conta e descrição.
 Prazo resposta: 3 dias úteis.
 Reembolsos: Apenas cobranças indevidas confirmadas (7 dias úteis).
 
@@ -72,22 +72,22 @@ PÁGINA 6 – PLANOS MÓVEIS E ADICIONAIS
 Premium 5G – 50 GB, chamadas/SMS ilimitados, roaming (20 países) – 1 500 MZN.
 Básico 4G – 10 GB, 500 min, SMS ilimitados – 500 MZN.
 Familiar 5G – 100 GB partilhados (4 linhas) – 2 500 MZN.
-Add-ons: Social, Noite, Streaming HD (*125#).
-PUJ: Após esgotar, velocidade 512 kbps.
+Complementos: Social, Noite, Transmissão HD (*125#).
+Política de Uso Justo: Após esgotar, velocidade 512 kbps.
 
 PÁGINA 7 – PLANOS EMPRESARIAIS E IoT
 
-Empresarial PRO – 200 GB, 2 000 min, dashboard, IP fixo – 5 000 MZN.
+Empresarial PRO – 200 GB, 2 000 min, painel de controlo, IP fixo – 5 000 MZN.
 IoT Starter – 1 GB/SIM – 50 MZN; gestão central via portal.
 SLA 99,5 %; gestor dedicado; APIs para integração ERP.
-Cenário: Empresa ativa 100 SIMs IoT para sensores agrícolas; AI sugere plano agregado.
+Cenário: Empresa ativa 100 SIMs IoT para sensores agrícolas; IA sugere plano agregado.
 
-PÁGINA 8 – POLÍTICA DE USO JUSTO E ADD-ONS
+PÁGINA 8 – POLÍTICA DE USO JUSTO E COMPLEMENTOS
 
 Limite definido por plano; após consumo, redução de velocidade.
 Notificação 80 % / 100 %.
-Add-ons disponíveis via App e *125#.
-Cenário: Utilizador streaming ativa add-on “Noite Ilimitada” das 22h–6h.
+Complementos disponíveis via aplicação móvel e *125#.
+Cenário: Utilizador de transmissão ativa complemento "Noite Ilimitada" das 22h–6h.
 
 PÁGINA 9 – APOIO TÉCNICO: INTERNET, APN, COBERTURA
 
@@ -100,7 +100,7 @@ PÁGINA 10 – PROBLEMAS COM CARTÃO SIM E eSIM
 
 Perda/Roubo: 840-123-456 → bloqueio imediato.
 Substituição: 100 MZN / 24 h.
-eSIM: QR code na App ou balcão; compatível c/ modelos suportados.
+eSIM: Código QR na aplicação móvel ou balcão; compatível com modelos suportados.
 Cenário: Turista compra eSIM 15 dias; recebe SMS de boas-vindas e saldo.
 
 PÁGINA 11 – SEGURANÇA DIGITAL E PROTEÇÃO DE DADOS
@@ -114,27 +114,27 @@ PÁGINA 12 – PREVENÇÃO DE FRAUDES E CIBERSEGURANÇA
 
 Fraudes comuns: SIM swap, phishing, links falsos.
 Verificação biométrica no balcão.
-Reporte: seguranca@mozaitelecomunicacao.co.mz
+Reporte: seguranca@suportevoiceai.co.mz
 
 Cenário: SMS falso detectado → alerta coletivo enviado.
 
 PÁGINA 13 – ALTERAÇÕES DE CONTA E PORTABILIDADE
 
-Atualize dados via App.
+Atualize dados via aplicação móvel.
 Mudança de plano → próximo ciclo.
-Port-in gratuito (24–48 h).
+Portabilidade gratuita (24–48 h).
 Cancelamento: aviso 30 dias.
 
 PÁGINA 14 – CANAIS DE CONTACTO E SLA
 
-Email apoio@…, Tel 840-123-456 (8–18h), Emergências 843-999-999.
-SLA: 1ª resposta < 30 s; resolução padrão 48 h.
+Correio eletrónico: apoio@suportevoiceai.co.mz, Tel 840-123-456 (8–18h), Emergências 843-999-999.
+Acordo de Nível de Serviço: 1ª resposta < 30 s; resolução padrão 48 h.
 Escalação L1 → L2 → L3.
 
 PÁGINA 15 – FAQ E TUTORIAIS
 
-Saldo *124#, Add-ons *125#, Roaming *127#, Transferência *126#.
-Vídeos tutoriais na App.
+Saldo *124#, Complementos *125#, Roaming *127#, Transferência *126#.
+Vídeos tutoriais na aplicação móvel.
 
 PÁGINA 16 – CENÁRIOS DE ATENDIMENTO (VOZ E CHAT)
 
@@ -150,8 +150,8 @@ Tradução texto-voz para deficientes auditivos.
 
 PÁGINA 18 – EDUCAÇÃO DIGITAL E LITERACIA
 
-Workshops em escolas; guias Hotspot/App/Segurança.
-Programa “Mulheres Digitais”.
+Workshops em escolas; guias Ponto de Acesso/Aplicação Móvel/Segurança.
+Programa "Mulheres Digitais".
 
 PÁGINA 19 – CAMPANHAS E PROMOÇÕES
 
@@ -163,16 +163,16 @@ PÁGINA 20 – TERMOS, DIREITOS E ENCERRAMENTO
 Direitos: informação clara, privacidade, portabilidade.
 Deveres: pagar em dia, manter dados.
 Encerramento: por pedido ou incumprimento.
-Agradecimento: Obrigado por escolher a Mozaitelecomunicação!
+Agradecimento: Obrigado por escolher o Suporte VoiceAI!
 
 
-MOZAITELECOMUNICAÇÃO – CUSTOMER SUPPORT GUIDE (Version 2025)
+VOICEAI SUPPORT – CUSTOMER SUPPORT GUIDE (Version 2025)
 
 Language: English (Mozambique)
 
 PAGE 1 – INTRODUCTION AND OVERVIEW
 
-Welcome to Mozaitelecomunicação, your trusted partner in mobile and digital communications.
+Welcome to VoiceAI Support, your trusted partner in mobile and digital communications.
 This guide was created to help you understand our services, plans, payment methods, contact channels, and operational policies.
 Our mission is to ensure reliable, affordable, and inclusive connectivity for all Mozambicans.
 In this guide: billing, plans, technical support, data security, customer rights and responsibilities.
@@ -194,7 +194,7 @@ Scenario: A hearing-impaired customer requests chat support; agent activates rea
 
 PAGE 3 – BILLING INFORMATION AND PAYMENT METHODS
 
-Online: Visit www.mozaitelecomunicacao.co.mz
+Online: Visit www.suportevoiceai.co.mz
  → Customer Area.
 
 Mozaitel App: Pay via M-Pesa, e-Mola, or bank card.
@@ -289,7 +289,7 @@ PAGE 12 – FRAUD PREVENTION AND CYBERSECURITY
 
 Common frauds: SIM swap, phishing, fake payment links.
 Biometric verification required in-branch.
-Report: seguranca@mozaitelecomunicacao.co.mz
+Report: seguranca@suportevoiceai.co.mz
 
 Scenario: Detected phishing SMS → alert broadcast to affected users.
 
@@ -345,4 +345,4 @@ PAGE 20 – TERMS, RIGHTS, AND CLOSING
 Customer Rights: Clear information, privacy, portability.
 Responsibilities: Pay on time, maintain accurate data.
 Closure: By request or breach; balances settled before termination.
-Thank You: Thank you for choosing Mozaitelecomunicação — connecting Mozambique to the future.
+Thank You: Thank you for choosing VoiceAI Support — connecting Mozambique to the future.
