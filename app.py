@@ -535,7 +535,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
     try:
         # Send bilingual greeting
-        greeting = "Olá! Bem-vindo à Mozaitelecomunicação. Como posso ajudá-lo hoje? / Hello! Welcome to Mozaitelecomunicação. How can I help you today?"
+        greeting = "Olá! Bem-vindo ao Suporte VoiceAI. Como posso ajudá-lo hoje? / Hello! Welcome to VoiceAI Support. How can I help you today?"
         audio_data = await rag_service.text_to_speech(greeting, language='pt')
 
         await websocket.send_json({
@@ -611,7 +611,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # Handle end session
             elif data["type"] == "end":
-                goodbye_msg = "Obrigado por contactar a Mozaitelecomunicação. Tenha um bom dia! / Thank you for contacting Mozaitelecomunicação. Have a great day!"
+                goodbye_msg = "Obrigado por usar o Suporte VoiceAI. Tenha um bom dia! / Thank you for using VoiceAI Support. Have a great day!"
                 audio_data = await rag_service.text_to_speech(goodbye_msg, language='pt')
                 await websocket.send_json({
                     "type": "goodbye",

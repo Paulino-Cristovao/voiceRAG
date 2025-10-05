@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mozaitelecomunicação - Assistente de Voz</title>
+    <title>Suporte VoiceAI - Assistente de Voz</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <style>
         * {
@@ -198,7 +198,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎙️ Mozaitelecomunicação</h1>
+        <h1>🎙️ Suporte VoiceAI</h1>
         <p class="subtitle">Assistente de Voz com IA</p>
 
         <div class="mic-container">
@@ -335,8 +335,8 @@
             try {
                 // Check if browser supports getUserMedia
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    statusText.textContent = 'Erro: Navegador não suporta gravação de áudio';
-                    showError('Seu navegador não suporta gravação de áudio. Use Chrome, Firefox ou Safari.');
+                    statusText.textContent = 'Navegador não suportado';
+                    showError('Seu navegador não suporta gravação de áudio.<br><br><strong>Navegadores compatíveis:</strong><br>• Chrome 60+<br>• Firefox 55+<br>• Safari 14+<br>• Edge 79+');
                     return;
                 }
 
@@ -390,17 +390,17 @@
 
                 let errorMsg = '';
                 if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-                    errorMsg = 'Permissão de microfone negada. Por favor, permita o acesso ao microfone nas configurações do navegador.';
+                    errorMsg = '<strong>Permissão de microfone negada</strong><br><br>Por favor, clique no ícone 🔒 na barra de endereço e permita o acesso ao microfone.';
                 } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-                    errorMsg = 'Nenhum microfone encontrado. Verifique se um microfone está conectado.';
+                    errorMsg = '<strong>Nenhum microfone encontrado</strong><br><br>Verifique se um microfone está conectado ao computador.';
                 } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-                    errorMsg = 'Microfone em uso por outro aplicativo. Feche outros programas que usam o microfone.';
+                    errorMsg = '<strong>Microfone em uso</strong><br><br>Feche outros aplicativos que possam estar usando o microfone (Zoom, Teams, etc).';
                 } else if (error.name === 'OverconstrainedError') {
-                    errorMsg = 'Configuração de áudio não suportada pelo seu dispositivo.';
+                    errorMsg = '<strong>Configuração não suportada</strong><br><br>Seu microfone não suporta a configuração de áudio necessária.';
                 } else if (error.name === 'SecurityError') {
-                    errorMsg = 'Erro de segurança. Use HTTPS ou localhost.';
+                    errorMsg = '<strong>Conexão insegura</strong><br><br>O microfone só funciona em:<br>• HTTPS (https://...)<br>• Localhost (http://localhost ou http://127.0.0.1)<br><br>Acesse o site via um desses métodos.';
                 } else {
-                    errorMsg = `Erro ao acessar microfone: ${error.message}`;
+                    errorMsg = `<strong>Erro ao acessar microfone</strong><br><br>${error.message}`;
                 }
 
                 statusText.textContent = 'Erro ao acessar microfone';
@@ -412,13 +412,8 @@
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error';
             errorDiv.innerHTML = `
-                <strong>⚠️ Erro de Microfone</strong><br>
+                <strong>⚠️ Erro de Microfone</strong><br><br>
                 ${message}
-                <br><br>
-                <strong>Como resolver:</strong><br>
-                • Chrome: Clique no ícone 🔒 na barra de endereço → Permitir microfone<br>
-                • Safari: Preferências → Sites → Microfone → Permitir<br>
-                • Firefox: Clique no ícone 🔒 na barra → Permissões → Microfone → Permitir
             `;
 
             // Remove error anterior se existir
@@ -466,7 +461,7 @@
             // Check basic API support
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 statusText.textContent = 'Navegador não suportado';
-                showError('Seu navegador não suporta gravação de áudio. Por favor, use:<br>• Chrome 60+<br>• Firefox 55+<br>• Safari 14+<br>• Edge 79+');
+                showError('<strong>Navegador não compatível</strong><br><br>Use um dos seguintes navegadores:<br>• Chrome 60+<br>• Firefox 55+<br>• Safari 14+<br>• Edge 79+');
                 return false;
             }
 
@@ -477,7 +472,7 @@
 
             if (!isSecure) {
                 statusText.textContent = 'Conexão insegura';
-                showError('Microfone requer HTTPS ou localhost. Acesse via:<br>• http://localhost:8000<br>• https://seu-dominio.com');
+                showError('<strong>Conexão insegura detectada</strong><br><br>O microfone só funciona em conexões seguras.<br><br><strong>Acesse via:</strong><br>• http://localhost:8000<br>• http://127.0.0.1:8000<br>• https://seu-dominio.com (produção)');
                 return false;
             }
 
